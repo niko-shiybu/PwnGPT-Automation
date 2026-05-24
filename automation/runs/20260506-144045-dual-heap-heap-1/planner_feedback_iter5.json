@@ -1,0 +1,45 @@
+{
+  "iteration": 5,
+  "strategy_summary": "通过手动交互记录堆操作的行为，确认分配和释放行为是否符合预期，并判断是否存在use-after-free漏洞。利用该漏洞覆盖函数指针以执行任意代码。",
+  "measurements": [
+    {
+      "id": 1,
+      "description": "确认堆题菜单的交互顺序和各输入含义",
+      "reason": "需要正确驱动程序进入目标状态",
+      "priority": "high"
+    },
+    {
+      "id": 2,
+      "description": "确认堆漏洞原语属于哪一类",
+      "reason": "决定利用路线",
+      "priority": "high"
+    },
+    {
+      "id": 3,
+      "description": "通过手动交互记录堆操作的行为，添加一个note，删除该note，再次添加一个note，打印note以观察行为",
+      "reason": "确认分配和释放行为是否符合预期，并判断是否存在use-after-free漏洞",
+      "priority": "medium"
+    },
+    {
+      "id": 4,
+      "description": "测量notelist数组的地址",
+      "reason": "确定notelist数组的位置，以便后续操作",
+      "priority": "high"
+    },
+    {
+      "id": 5,
+      "description": "测量magic函数的地址",
+      "reason": "确定要覆盖的目标函数地址",
+      "priority": "high"
+    },
+    {
+      "id": 6,
+      "description": "测量print_note_content函数的地址",
+      "reason": "确定要覆盖的函数指针位置",
+      "priority": "high"
+    }
+  ],
+  "notes": [
+    "DECIDER_MANDATORY: 使用run_binary_with_payload手动交互并记录堆操作的行为"
+  ]
+}

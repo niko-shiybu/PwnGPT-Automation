@@ -1,0 +1,8 @@
+{
+  "iteration": 2,
+  "strategy_summary": "The binary is vulnerable to a format string attack. We can use the printf function to overwrite the GOT entry of a function, such as puts, with the address of system. To do this, we need to find the offset to control the format string and then calculate the distance between the puts GOT entry and the system address in libc. We will also need to leak a libc address to defeat ASLR.",
+  "measurements": [],
+  "notes": [
+    "agent_strategy_response"
+  ]
+}

@@ -1,4 +1,10 @@
-chroma_langchain_qwen_db/
-core.*
 __pycache__/
-response.md
+*.pyc
+*.pyo
+.venv/
+automation/benchmarks/*.json
+*.log
+core.*
+.claude/
+.DS_Store
+automation/local_config.py

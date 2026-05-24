@@ -1,0 +1,8 @@
+{
+  "failure": "line 12: The return address (ret) is set to 0x8048343, which is not a valid return address. This causes the program to crash with a SIGSEGV.",
+  "next_action": "Replace 0x8048343 with the correct return address, such as the start of the win function or a ROP gadget.",
+  "notes": [
+    "TAG: wrong_return_address"
+  ],
+  "value_score": 0
+}

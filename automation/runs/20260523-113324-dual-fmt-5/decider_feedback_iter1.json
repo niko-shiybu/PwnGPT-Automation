@@ -1,0 +1,6 @@
+{
+  "failure": "The exploit is causing a segmentation fault, likely due to incorrect format string payload or wrong offsets.",
+  "next_action": "Re-evaluate the format string payload and offsets. Ensure that the payload correctly overwrites the GOT entries without causing a segmentation fault. Consider using a more controlled approach to test the offsets and values being written.",
+  "notes": [],
+  "value_score": 0
+}

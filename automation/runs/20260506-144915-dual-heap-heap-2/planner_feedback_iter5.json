@@ -1,0 +1,27 @@
+{
+  "iteration": 5,
+  "strategy_summary": "通过分析堆操作轨迹，确定堆漏洞类型（如UAF、double free等），并设计相应的利用策略。",
+  "measurements": [
+    {
+      "id": 1,
+      "description": "确认堆题菜单的交互顺序和各输入含义",
+      "reason": "需要正确驱动程序进入目标状态",
+      "priority": "high"
+    },
+    {
+      "id": 2,
+      "description": "确认堆漏洞原语属于哪一类",
+      "reason": "决定利用路线",
+      "priority": "high"
+    },
+    {
+      "id": 3,
+      "description": "使用 run_binary_with_payload 手动交互并记录堆操作轨迹",
+      "reason": "判断分配释放行为是否符合预期",
+      "priority": "medium"
+    }
+  ],
+  "notes": [
+    "由于ltrace工具未找到，建议手动记录堆操作轨迹。"
+  ]
+}

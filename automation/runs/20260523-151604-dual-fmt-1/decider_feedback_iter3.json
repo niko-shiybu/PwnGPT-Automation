@@ -1,0 +1,6 @@
+{
+  "failure": "line 7: the value passed to fmtstr_payload for the GOT key is incorrect. It writes the address of system_got instead of the address of system in libc. Change the second argument from {printf_got: system_got} to {printf_got: libc.symbols['system']}.",
+  "next_action": "",
+  "notes": [],
+  "value_score": 0
+}

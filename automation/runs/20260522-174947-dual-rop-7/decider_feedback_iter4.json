@@ -1,0 +1,6 @@
+{
+  "failure": "fact_store is not defined, causing a NameError",
+  "next_action": "",
+  "notes": [],
+  "value_score": 0
+}

@@ -1,0 +1,51 @@
+{
+  "iteration": 1,
+  "strategy_summary": "通过分析程序的堆操作，确定堆漏洞类型，并设计相应的利用策略。目标是通过堆溢出或UAF等手段，最终调用EZ_WIN函数执行system(\"/bin/sh\")。",
+  "measurements": [
+    {
+      "id": 1,
+      "description": "确认堆题菜单的交互顺序和各输入含义",
+      "reason": "需要正确驱动程序进入目标状态",
+      "priority": "high"
+    },
+    {
+      "id": 2,
+      "description": "确认堆漏洞原语属于哪一类",
+      "reason": "决定利用路线",
+      "priority": "high"
+    },
+    {
+      "id": 3,
+      "description": "确认关键堆操作的运行轨迹",
+      "reason": "判断分配释放行为是否符合预期",
+      "priority": "medium"
+    },
+    {
+      "id": 4,
+      "description": "确认new_meme函数中的堆分配大小和位置",
+      "reason": "了解堆布局，为后续利用做准备",
+      "priority": "high"
+    },
+    {
+      "id": 5,
+      "description": "确认edit_meme函数中的边界检查情况",
+      "reason": "判断是否存在堆溢出或UAF漏洞",
+      "priority": "high"
+    },
+    {
+      "id": 6,
+      "description": "确认print_meme函数中的指针使用情况",
+      "reason": "寻找可覆盖的目标指针",
+      "priority": "high"
+    },
+    {
+      "id": 7,
+      "description": "确认EZ_WIN函数的地址",
+      "reason": "为目标函数调用做准备",
+      "priority": "high"
+    }
+  ],
+  "notes": [
+    "根据堆漏洞类型选择合适的利用方法，如UAF或堆溢出。"
+  ]
+}

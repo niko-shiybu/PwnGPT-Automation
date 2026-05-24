@@ -1,0 +1,45 @@
+{
+  "iteration": 3,
+  "strategy_summary": "通过手动交互记录堆操作轨迹，确认分配和释放行为是否符合预期。根据堆漏洞原语类型设计利用策略。",
+  "measurements": [
+    {
+      "id": 1,
+      "description": "确认堆题菜单的交互顺序和各输入含义",
+      "reason": "需要正确驱动程序进入目标状态",
+      "priority": "high"
+    },
+    {
+      "id": 2,
+      "description": "确认堆漏洞原语属于哪一类",
+      "reason": "决定利用路线",
+      "priority": "high"
+    },
+    {
+      "id": 3,
+      "description": "使用 run_binary_with_payload 手动交互并记录堆操作轨迹",
+      "reason": "判断分配释放行为是否符合预期",
+      "priority": "medium"
+    },
+    {
+      "id": 4,
+      "description": "确认堆块大小和布局",
+      "reason": "了解堆块分配情况，确定攻击点",
+      "priority": "high"
+    },
+    {
+      "id": 5,
+      "description": "确认堆块的分配和释放顺序",
+      "reason": "识别可能的UAF或double free机会",
+      "priority": "high"
+    },
+    {
+      "id": 6,
+      "description": "确认函数指针的位置和可覆盖性",
+      "reason": "确定如何覆盖函数指针以劫持控制流",
+      "priority": "high"
+    }
+  ],
+  "notes": [
+    "由于 ltrace 工具未找到，需要手动记录堆操作轨迹。"
+  ]
+}

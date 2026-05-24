@@ -1,0 +1,8 @@
+{
+  "failure": "line 14: p32(-559038737) and p32(-889275714) are out of the valid range for a 32-bit signed integer, which is -2147483648 to 2147483647",
+  "next_action": "replace p32(-559038737) with p32(0xdeadbeef) and p32(-889275714) with p32(0xcafebabe)",
+  "notes": [
+    "TAG: argument_out_of_range"
+  ],
+  "value_score": 0
+}

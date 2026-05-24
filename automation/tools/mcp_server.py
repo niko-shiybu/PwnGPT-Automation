@@ -9,6 +9,10 @@ _repo_root = Path(__file__).resolve().parents[2]
 if str(_repo_root) not in sys.path:
     sys.path.insert(0, str(_repo_root))
 
+import urllib.request
+import urllib.parse
+import re as _re
+
 from fastmcp import FastMCP
 
 from automation.tools.tool_runner import (
@@ -75,6 +79,35 @@ def get_symbols(binary_path: str) -> str:
 def disassemble_func(binary_path: str, function: str = "main") -> str:
     """Disassemble a function in the binary."""
     return _to_json(tool_disassemble(binary_path, function=function))
+
+
+@mcp.tool()
+def web_search(query: str) -> str:
+    """Search the web for CTF exploitation techniques, code patterns, and fixes.
+    Use this whenever you need to look up strategies, calling conventions, pwntools API, or error fixes."""
+    try:
+        q = urllib.parse.quote(query)
+        url = "https://lite.duckduckgo.com/lite/?q={}".format(q)
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            html = resp.read().decode("utf-8", errors="ignore")
+        # Extract result snippets
+        results = []
+        for m in _re.finditer(r'<a[^>]*class="result-link"[^>]*>([^<]+)</a>', html):
+            results.append(m.group(1).strip())
+        if not results:
+            for m in _re.finditer(r'<a[^>]*href="([^"]+)"[^>]*>([^<]+)</a>', html):
+                href, text = m.group(1), m.group(2)
+                if "duckduckgo" not in href and text.strip():
+                    results.append("{} ({})".format(text.strip(), href))
+        if results:
+            return "\n".join(results[:10])
+        # Fallback: return raw text snippets
+        text = _re.sub(r'<[^>]+>', ' ', html)
+        text = _re.sub(r'\s+', ' ', text).strip()
+        return text[:2000]
+    except Exception as exc:
+        return "web_search error: {}".format(exc)
 
 
 if __name__ == "__main__":

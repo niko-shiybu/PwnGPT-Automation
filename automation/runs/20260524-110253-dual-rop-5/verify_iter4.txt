@@ -1,0 +1,15 @@
+{
+  "success": false,
+  "exit_code": 1,
+  "success_signals": [],
+  "failure_signals": [
+    "Traceback",
+    "error:"
+  ],
+  "stdout_tail": "",
+  "stderr_tail": "Traceback (most recent call last):\n  File \"/home/fyc/PwnGPT/automation/runs/20260524-110253-dual-rop-5/candidate_exploit.py\", line 3, in <module>\n    context.binary = \"./rop5\"\n  File \"/home/fyc/miniconda3/envs/pwngpt/lib/python3.10/site-packages/pwnlib/context/__init__.py\", line 176, in fset\n    self._tls[name] = validator(self, val)\n  File \"/home/fyc/miniconda3/envs/pwngpt/lib/python3.10/site-packages/pwnlib/context/__init__.py\", line 888, in binary\n    binary = ELF(binary)\n  File \"/home/fyc/miniconda3/envs/pwngpt/lib/python3.10/site-packages/pwnlib/elf/elf.py\", line 221, in __init__\n    self.file = open(path,'rb')\nFileNotFoundError: [Errno 2] No such file or directory: './rop5'",
+  "stdout_full": "",
+  "stderr_full": "Traceback (most recent call last):\n  File \"/home/fyc/PwnGPT/automation/runs/20260524-110253-dual-rop-5/candidate_exploit.py\", line 3, in <module>\n    context.binary = \"./rop5\"\n  File \"/home/fyc/miniconda3/envs/pwngpt/lib/python3.10/site-packages/pwnlib/context/__init__.py\", line 176, in fset\n    self._tls[name] = validator(self, val)\n  File \"/home/fyc/miniconda3/envs/pwngpt/lib/python3.10/site-packages/pwnlib/context/__init__.py\", line 888, in binary\n    binary = ELF(binary)\n  File \"/home/fyc/miniconda3/envs/pwngpt/lib/python3.10/site-packages/pwnlib/elf/elf.py\", line 221, in __init__\n    self.file = open(path,'rb')\nFileNotFoundError: [Errno 2] No such file or directory: './rop5'\n",
+  "forensics_full": "",
+  "summary": "failed_exit_1"
+}

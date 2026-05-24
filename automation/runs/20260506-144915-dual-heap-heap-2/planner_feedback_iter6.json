@@ -1,0 +1,45 @@
+{
+  "iteration": 6,
+  "strategy_summary": "通过分析堆操作行为，确定堆漏洞类型，并设计相应的利用策略。",
+  "measurements": [
+    {
+      "id": 1,
+      "description": "确认堆题菜单的交互顺序和各输入含义",
+      "reason": "需要正确驱动程序进入目标状态",
+      "priority": "high"
+    },
+    {
+      "id": 2,
+      "description": "确认堆漏洞原语属于哪一类",
+      "reason": "决定利用路线",
+      "priority": "high"
+    },
+    {
+      "id": 3,
+      "description": "手动记录每次malloc和free的调用情况",
+      "reason": "判断分配释放行为是否符合预期",
+      "priority": "medium"
+    },
+    {
+      "id": 4,
+      "description": "确认是否存在UAF漏洞",
+      "reason": "确定是否可以通过释放后再使用来覆盖关键指针",
+      "priority": "high"
+    },
+    {
+      "id": 5,
+      "description": "确认是否存在堆溢出漏洞",
+      "reason": "确定是否可以通过溢出来覆盖相邻的堆块",
+      "priority": "high"
+    },
+    {
+      "id": 6,
+      "description": "确认堆块的布局和大小",
+      "reason": "了解堆块的分配情况，以便设计利用策略",
+      "priority": "medium"
+    }
+  ],
+  "notes": [
+    "由于ltrace工具未找到，需要手动记录堆操作轨迹。"
+  ]
+}

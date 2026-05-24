@@ -1,0 +1,27 @@
+{
+  "iteration": 2,
+  "strategy_summary": "通过手动交互记录堆操作的行为，确认分配和释放行为是否符合预期。利用use-after-free漏洞覆盖函数指针，最终调用magic()函数。",
+  "measurements": [
+    {
+      "id": 1,
+      "description": "确认堆题菜单的交互顺序和各输入含义",
+      "reason": "需要正确驱动程序进入目标状态",
+      "priority": "high"
+    },
+    {
+      "id": 2,
+      "description": "确认堆漏洞原语属于哪一类",
+      "reason": "决定利用路线",
+      "priority": "high"
+    },
+    {
+      "id": 3,
+      "description": "通过手动交互记录堆操作的行为，确认分配和释放行为是否符合预期",
+      "reason": "判断分配释放行为是否符合预期",
+      "priority": "medium"
+    }
+  ],
+  "notes": [
+    "由于ltrace工具未找到，建议使用run_binary_with_payload手动交互并记录堆操作的行为。"
+  ]
+}

@@ -1,0 +1,34 @@
+Challenge is a ELF 32-bit LSB executable file, which is named as fmt. 
+1.Here is the key function for exploit in the C file decompiled from fmt, with each function starting with its address:
+
+//----- (0804854B) --------------------------------------------------------
+int __cdecl __noreturn main(int argc, const char **argv, const char **envp)
+{
+  char buf[100]; // [esp+8h] [ebp-70h] BYREF
+  unsigned int v4; // [esp+6Ch] [ebp-Ch]
+
+  v4 = __readgsdword(0x14u);
+  setbuf(stdin, 0);
+  setbuf(stdout, 0);
+  setbuf(stderr, 0);
+  puts("Do you know repeater?");
+  while ( 1 )
+  {
+    read(0, buf, 0x64u);
+    printf(buf);
+    putchar(10);
+  }
+}
+
+2.Here is Relocation section '.rel.plt' at offset 0x370 in fmt:
+
+ Offset     Info    Type            Sym.Value  Sym. Name
+0804a00c  00000107 R_386_JUMP_SLOT   00000000   setbuf@GLIBC_2.0
+0804a010  00000207 R_386_JUMP_SLOT   00000000   read@GLIBC_2.0
+0804a014  00000307 R_386_JUMP_SLOT   00000000   printf@GLIBC_2.0
+0804a018  00000407 R_386_JUMP_SLOT   00000000   puts@GLIBC_2.0
+0804a01c  00000607 R_386_JUMP_SLOT   00000000   __libc_start_main@GLIBC_2.0
+0804a020  00000707 R_386_JUMP_SLOT   00000000   putchar@GLIBC_2.0
+
+
+3.We get the libc file(libc.so.6) that is dependent by fmt.

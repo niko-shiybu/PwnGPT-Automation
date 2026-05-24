@@ -1,0 +1,8 @@
+{
+  "iteration": 1,
+  "strategy_summary": "The binary is a 32-bit ELF with NX enabled and no PIE. The vulnerability is a stack overflow in the vulnerable_function, which reads 256 bytes into a 136-byte buffer. We can use ROP to call the not_called function, which calls system('/bin/bash'). Since we have partial RELRO, we can overwrite the GOT entry for system with the address of not_called. First, we need to measure the offset to the return address and find gadgets to control the arguments.",
+  "measurements": [],
+  "notes": [
+    "agent_strategy_response"
+  ]
+}

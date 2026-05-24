@@ -1,0 +1,8 @@
+{
+  "failure": "line 18: p32(-559038737) raises a struct.error because the argument is out of range for a 32-bit signed integer",
+  "next_action": "replace -559038737 with u32(-559038737 & 0xffffffff)",
+  "notes": [
+    "TAG: argument_out_of_range"
+  ],
+  "value_score": 0
+}

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -163,30 +164,54 @@ def run_agent_loop(
 
     from automation.llm_client import chat_complete_detailed
 
-    for it in range(1, max_iters + 1):
-        ctx = f"""## Problem\n{problem_text}\n\n## Evidence\n{evidence_to_text(evidence, fact_store)}\n\n## Iteration {it}/{max_iters}"""
+    for iteration in range(1, max_iters + 1):
+        ctx = "## Iteration {}/{}\n## Problem\n{}\n\n## Evidence\n{}".format(
+            iteration, max_iters, problem_text, evidence_to_text(evidence, fact_store))
 
-        if it == 1:
-            ctx += "\n\nFIRST ITERATION: Use tools to measure facts, then write exploit code."
+        # =====================================================================
+        # STEP 1: Planner — propose strategy + measurements
+        # =====================================================================
+        strategy_prompt = ctx + """
+You are the PLANNING phase. Propose a strategy and request measurements.
+Respond with JSON:
+{
+  "strategy_summary": "...",
+  "measurements": [
+    {"name": "...", "args": {"binary_path": "..."}}
+  ]
+}
+Available tools: measure_offset, find_gadgets, measure_fmt_offset, scan_fmt_stack, get_got, get_symbols, disassemble
+If you don't need measurements, set "measurements" to empty list."""
+        try:
+            res_s = chat_complete_detailed(strategy_prompt, AGENT_SYSTEM_PROMPT, temperature=0.1)
+            strategy_text = res_s.raw_content
+        except Exception as exc:
+            strategy_text = json.dumps({"strategy_summary": "LLM call failed: {}".format(exc), "measurements": []})
 
-        # ---- Agent decides: measure or write ----
-        prompt = ctx + """
-Respond with JSON to request measurements, or Python code for the exploit.
+        planner_fb = {"iteration": iteration, "strategy_summary": "", "measurements": [], "notes": []}
+        try:
+            if strategy_text.strip().startswith("{"):
+                req = json.loads(strategy_text)
+                planner_fb["strategy_summary"] = str(req.get("strategy_summary", ""))[:500]
+                planner_fb["notes"] = ["agent_strategy_response"]
+        except Exception:
+            planner_fb["notes"] = ["strategy_parse_failed"]
+        (run_dir / "planner_feedback_iter{}.json".format(iteration)).write_text(
+            json.dumps(planner_fb, ensure_ascii=False, indent=2))
 
-For measurements: {"action":"measure","tools":[{"name":"...","args":{}}]}
-
-For exploit: Output ONLY Python code."""
-        res = chat_complete_detailed(prompt, AGENT_SYSTEM_PROMPT, temperature=0.1)
-
-        if res.raw_content.strip().startswith("{") and '"action"' in res.raw_content:
+        # =====================================================================
+        # STEP 2: Executor — execute measurements
+        # =====================================================================
+        if strategy_text.strip().startswith("{") and '"measurements"' in strategy_text:
             try:
-                req = json.loads(res.raw_content)
-                for t in req.get("tools", []):
+                req = json.loads(strategy_text)
+                for t in req.get("measurements", []):
                     name, args = t.get("name", ""), t.get("args", {})
                     fn = TOOLS.get(name, (None, None))[1]
                     if fn:
                         try:
-                            result = fn(args.get("binary_path", binary_abs), **{k: v for k, v in args.items() if k != "binary_path"})
+                            result = fn(args.get("binary_path", binary_abs),
+                                      **{k: v for k, v in args.items() if k != "binary_path"})
                             if isinstance(result, str):
                                 result = json.loads(result)
                             fact_store.update(result if isinstance(result, dict) else {})
@@ -194,36 +219,96 @@ For exploit: Output ONLY Python code."""
                             pass
             except Exception:
                 pass
-            continue  # After measuring, loop to next iteration
 
-        # ---- Write exploit ----
-        code = res.raw_content
-        save_exploit_code(str(epath), code)
+        # =====================================================================
+        # STEP 3: ExploitWriter — generate code
+        # =====================================================================
+        code_prompt = ctx + """
+You are the EXPLOIT WRITING phase. Write a complete pwntools exploit.
+Fact store (measured values): {}
+Output ONLY Python code, no markdown fences, no explanation.""".format(json.dumps(fact_store, ensure_ascii=False))
+        try:
+            res_e = chat_complete_detailed(code_prompt, AGENT_SYSTEM_PROMPT, temperature=0.1)
+            exploit_code = res_e.raw_content
+        except Exception:
+            exploit_code = 'from pwn import *\nprint("[STAGE] exploit_start")\np = process(binary.path)\np.interactive()'
+        save_exploit_code(str(epath), exploit_code)
+        (run_dir / "candidate_exploit_iter{}.py".format(iteration)).write_text(
+            epath.read_text() if epath.exists() else exploit_code)
 
+        # =====================================================================
+        # STEP 4: Verify
+        # =====================================================================
         from automation.verify.verifier import verify_exploit
-        v = verify_exploit(str(epath), timeout_sec=20, repo_root=str(repo_root))
-        (run_dir / f"verify_iter{it}.txt").write_text(v.to_json())
+        v = verify_exploit(epath, run_dir)
+        (run_dir / "verify_iter{}.txt".format(iteration)).write_text(v.to_json())
 
         if v.success:
             success = True
-            history.append({"iteration": it, "verify": {"success": True, "exit_code": v.exit_code}, "decider": {"failure": "", "notes": ["success"]}})
+            history.append({
+                "iteration": iteration,
+                "planner_strategy": planner_fb.get("strategy_summary", ""),
+                "verify": {"success": True, "exit_code": v.exit_code},
+                "decider": {"failure": "", "next_action": "", "notes": ["success"]},
+                "fact_store_size": len(fact_store),
+            })
             break
 
-        # ---- Diagnose + fix ----
-        diag = verify_result_to_text({"success": v.success, "exit_code": v.exit_code, "stdout_tail": v.stdout_tail, "stderr_tail": v.stderr_tail})
-        fix_prompt = f"Exploit failed:\n\n{diag}\n\nDiagnose and write CORRECTED exploit code (Python only):"
-        res2 = chat_complete_detailed(fix_prompt, AGENT_SYSTEM_PROMPT, temperature=0.1)
-        save_exploit_code(str(epath), res2.raw_content)
+        # =====================================================================
+        # STEP 5: Decider — diagnose + fix
+        # =====================================================================
+        diag_text = verify_result_to_text({
+            "success": v.success, "exit_code": v.exit_code,
+            "stdout_tail": v.stdout_tail, "stderr_tail": v.stderr_tail,
+        })
+        key_diag = diag_text[-3000:]
+        failed_code = epath.read_text()[:3000] if epath.exists() else ""
 
-        v = verify_exploit(str(epath), timeout_sec=20, repo_root=str(repo_root))
-        if v.success:
+        # Auto-search for Decider: extract error patterns and search for fixes
+        search_context = ""
+        err_keywords = re.findall(r"(SIGSEGV|SIGABRT|KeyError|NameError|TypeError|struct\.error|BrokenPipeError|EOFError|RELRO|ROP|GOT|fmtstr|overflow|canary|pack requires)", key_diag)
+        if err_keywords:
+            dq = "{} exploit fix pwntools".format(" ".join(err_keywords[:3]))
+            try:
+                sr = _web_search(dq)
+                search_context = "\n\n=== WEB SEARCH (auto) ===\nQuery: {}\nResults:\n{}".format(dq, sr[:2000])
+            except Exception:
+                pass
+
+        decider_prompt = """Exploit FAILED.
+
+=== RUNTIME ERROR ===
+{}
+{}
+
+=== FAILED EXPLOIT CODE ===
+```python
+{}
+```
+
+Step 1: Read the WEB SEARCH results above — they may contain specific fixes for this error.
+Step 2: Read the code and error. Find the exact bug.
+Step 3: Fix the exploit. Output ONLY the corrected Python code.""".format(key_diag, search_context, failed_code)
+        try:
+            res_f = chat_complete_detailed(decider_prompt, AGENT_SYSTEM_PROMPT, temperature=0.1)
+            save_exploit_code(str(epath), res_f.raw_content)
+        except Exception:
+            pass
+
+        v2 = verify_exploit(epath, run_dir)
+        if v2.success:
             success = True
 
         history.append({
-            "iteration": it,
-            "planner_strategy": "", "plan_measurements": [],
-            "verify": {"success": v.success, "exit_code": v.exit_code, "stdout_tail": v.stdout_tail, "stderr_tail": v.stderr_tail, "failure_signals": []},
-            "decider": {"failure": str(v.stderr_tail or "")[:500], "next_action": "", "notes": []},
+            "iteration": iteration,
+            "planner_strategy": planner_fb.get("strategy_summary", ""),
+            "plan_measurements": [],
+            "verify": {
+                "success": v2.success, "exit_code": v2.exit_code,
+                "stdout_tail": v2.stdout_tail, "stderr_tail": v2.stderr_tail,
+                "failure_signals": [],
+            },
+            "decider": {"failure": str(v2.stderr_tail or "")[:500], "next_action": "", "notes": []},
             "fact_store_size": len(fact_store),
         })
 

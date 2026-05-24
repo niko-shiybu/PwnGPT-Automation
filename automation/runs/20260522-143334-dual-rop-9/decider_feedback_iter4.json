@@ -1,0 +1,8 @@
+{
+  "failure": "The values for the registers ebx and ecx are incorrect. The exploit is trying to call a function with specific arguments, but the provided values (814536271 and 425138641) do not make sense in this context.",
+  "next_action": "line 10: change p32(814536271) to p32(binary.symbols['flag']) and line 12: change p32(425138641) to p32(0x0)",
+  "notes": [
+    "TAG: wrong_arguments"
+  ],
+  "value_score": 0
+}

@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "exit_code": 0,
+  "success_signals": [
+    "uid=",
+    "gid="
+  ],
+  "failure_signals": [],
+  "stdout_tail": "[*] '/home/fyc/PwnGPT/pwn/stack/rop-7/rop7'\n    Arch:       amd64-64-little\n    RELRO:      Partial RELRO\n    Stack:      No canary found\n    NX:         NX enabled\n    PIE:        No PIE (0x400000)\n    SHSTK:      Enabled\n    IBT:        Enabled\n    Stripped:   No\n[*] '/lib/x86_64-linux-gnu/libc.so.6'\n    Arch:       amd64-64-little\n    RELRO:      Full RELRO\n    Stack:      Canary found\n    NX:         NX enabled\n    PIE:        PIE enabled\n    FORTIFY:    Enabled\n[x] Starting local process '/home/fyc/PwnGPT/pwn/stack/rop-7/rop7'\n[+] Starting local process '/home/fyc/PwnGPT/pwn/stack/rop-7/rop7': pid 2744967\n[*] Loaded 16 cached gadgets for '/home/fyc/PwnGPT/pwn/stack/rop-7/rop7'\n[*] Switching to interactive mode\nwelcome to ROP\ninput your name plz\nbye!\n__PWNED__\nuid=1519(fyc) gid=10000(students) groups=10000(students),996(docker)\n/home/fyc/PwnGPT/automation/runs/20260524-083946-dual-rop-7\n__ALIVE__\n[*] Stopped process '/home/fyc/PwnGPT/pwn/stack/rop-7/rop7' (pid 2744967)",
+  "stderr_tail": "/home/fyc/miniconda3/envs/pwngpt/lib/python3.10/site-packages/unicorn/unicorn_py3/unicorn.py:123: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.\n  import pkg_resources",
+  "stdout_full": "[*] '/home/fyc/PwnGPT/pwn/stack/rop-7/rop7'\n    Arch:       amd64-64-little\n    RELRO:      Partial RELRO\n    Stack:      No canary found\n    NX:         NX enabled\n    PIE:        No PIE (0x400000)\n    SHSTK:      Enabled\n    IBT:        Enabled\n    Stripped:   No\n[*] '/lib/x86_64-linux-gnu/libc.so.6'\n    Arch:       amd64-64-little\n    RELRO:      Full RELRO\n    Stack:      Canary found\n    NX:         NX enabled\n    PIE:        PIE enabled\n    FORTIFY:    Enabled\n[x] Starting local process '/home/fyc/PwnGPT/pwn/stack/rop-7/rop7'\n[+] Starting local process '/home/fyc/PwnGPT/pwn/stack/rop-7/rop7': pid 2744967\n[*] Loaded 16 cached gadgets for '/home/fyc/PwnGPT/pwn/stack/rop-7/rop7'\n[*] Switching to interactive mode\nwelcome to ROP\ninput your name plz\nbye!\n__PWNED__\nuid=1519(fyc) gid=10000(students) groups=10000(students),996(docker)\n/home/fyc/PwnGPT/automation/runs/20260524-083946-dual-rop-7\n__ALIVE__\n[*] Stopped process '/home/fyc/PwnGPT/pwn/stack/rop-7/rop7' (pid 2744967)\n",
+  "stderr_full": "/home/fyc/miniconda3/envs/pwngpt/lib/python3.10/site-packages/unicorn/unicorn_py3/unicorn.py:123: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.\n  import pkg_resources\n",
+  "forensics_full": "",
+  "summary": "success"
+}

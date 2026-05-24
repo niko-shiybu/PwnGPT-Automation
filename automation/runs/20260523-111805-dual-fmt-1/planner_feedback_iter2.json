@@ -1,0 +1,8 @@
+{
+  "iteration": 2,
+  "strategy_summary": "The binary is vulnerable to a format string attack. We can use the format string vulnerability to leak the address of a function in the GOT, such as 'printf', and then calculate the base address of libc. After that, we can overwrite the GOT entry of 'printf' with the address of 'system'. When 'printf' is called again, it will actually call 'system', allowing us to execute '/bin/sh'.",
+  "measurements": [],
+  "notes": [
+    "agent_strategy_response"
+  ]
+}

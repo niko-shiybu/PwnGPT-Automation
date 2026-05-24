@@ -1,0 +1,45 @@
+{
+  "iteration": 1,
+  "strategy_summary": "通过分析堆操作和菜单交互模型，确定堆漏洞原语类型，并利用该原语进行攻击。",
+  "measurements": [
+    {
+      "id": 1,
+      "description": "确认堆题菜单的交互顺序和各输入含义",
+      "reason": "需要正确驱动程序进入目标状态",
+      "priority": "high"
+    },
+    {
+      "id": 2,
+      "description": "确认堆漏洞原语属于哪一类",
+      "reason": "决定利用路线",
+      "priority": "high"
+    },
+    {
+      "id": 3,
+      "description": "确认关键堆操作的运行轨迹",
+      "reason": "判断分配释放行为是否符合预期",
+      "priority": "medium"
+    },
+    {
+      "id": 4,
+      "description": "确认是否存在use-after-free漏洞",
+      "reason": "验证是否可以复用已释放的内存块",
+      "priority": "high"
+    },
+    {
+      "id": 5,
+      "description": "确认函数指针的位置和可写性",
+      "reason": "确保可以覆盖函数指针以劫持控制流",
+      "priority": "high"
+    },
+    {
+      "id": 6,
+      "description": "确认`magic()`函数地址",
+      "reason": "用于覆盖函数指针以调用`system(\"cat flag\");`",
+      "priority": "high"
+    }
+  ],
+  "notes": [
+    "需要进一步确认堆操作的具体行为，特别是分配和释放的顺序。"
+  ]
+}

@@ -68,34 +68,25 @@ def _evidence_to_text(evidence: Evidence, fact_store: Dict[str, Any]) -> str:
     return "\n".join(parts)
 
 
-SYSTEM_PROMPT = """You are a CTF binary exploitation agent. You have TerminalTool and FileEditorTool available, plus MCP tools for CTF-specific measurements.
+SYSTEM_PROMPT = """You are a CTF binary exploitation agent. You have TerminalTool, FileEditorTool, and MCP tools (including web_search for looking up strategies and fixes).
 
 === WORKFLOW ===
 1. Read the problem text to understand the vulnerability and challenge type.
 2. Use MCP tools to MEASURE facts (offsets, gadgets, format string offsets).
-3. Write candidate_exploit.py with your pwntools exploit code using FileEditorTool.
-4. Run the exploit with TerminalTool: python3 candidate_exploit.py
-5. If it fails, read the error output, diagnose, FIX the code.
-6. Repeat until you get a shell or flag.
-
-=== ROP (stack overflow) ===
-- ret2text: payload = b"A" * OFFSET + p32/p64(win_addr)
-- ret2libc 64-bit: MUST use pop_rdi for first argument. Use rop.call(func, [args]).
-- ret2shellcode (NX disabled): shellcode = asm(shellcraft.sh())
-- Use measured offset/gadget values from MCP tools.
-
-=== FMT (format string) ===
-- Overwrite var: fmtstr_payload(OFFSET, {addr: value})
-- Overwrite GOT (RELRO != full): fmtstr_payload(OFFSET, {binary.got['printf']: libc.symbols['system']})
-- Full RELRO: leak libc via %s, overwrite return address instead.
-- Use measured fmt_offset from MCP tools.
+3. If unsure about the exploitation strategy, use web_search to find the correct approach.
+4. Write candidate_exploit.py with your pwntools exploit code using FileEditorTool.
+5. Run the exploit with TerminalTool: python3 candidate_exploit.py
+6. If it fails, read the error output, diagnose, use web_search to find fixes, FIX the code.
+7. Repeat until you get a shell or flag.
 
 === GENERAL RULES ===
 - from pwn import * includes everything needed.
 - Use process(binary.path), NOT remote().
 - Stage markers: print("[STAGE] exploit_start") / print("[STAGE] before_interactive").
 - Avoid unbounded recv/recvall. Use sendlineafter() with IO prompts.
-- Output ONLY Python code when writing exploit. No markdown, no explanation."""
+- Output ONLY Python code when writing exploit. No markdown, no explanation.
+- ALWAYS load libc from the evidence, NOT from the binary path.
+- Use binary.got / binary.plt for addresses, NEVER hardcode 0x addresses."""
 
 
 def run_openhands_agent(
@@ -103,15 +94,14 @@ def run_openhands_agent(
     problem_text: str,
     run_dir: Path,
     event_logger: Callable[[str, dict], None],
+    max_iters: int = 5,
 ) -> Dict[str, Any]:
     from openhands.sdk import LLM, Agent, LocalConversation, LocalWorkspace
-    from openhands.tools.terminal import TerminalTool
-    from openhands.tools.file_editor import FileEditorTool
+    from openhands.tools import get_default_tools
 
     model = getattr(local_config, "OPENHANDS_MODEL", "qwen-max")
     api_key = getattr(local_config, "OPENHANDS_API_KEY", "")
     base_url = getattr(local_config, "OPENHANDS_BASE_URL", "")
-    max_iters = getattr(local_config, "OPENHANDS_MAX_ITERATIONS", 30)
 
     # Setup workspace directory for this run
     ws_dir = run_dir / "workspace"
@@ -135,8 +125,9 @@ def run_openhands_agent(
     llm = LLM(**llm_kwargs)
     agent = Agent(
         llm=llm,
-        tools=[TerminalTool, FileEditorTool],
+        tools=[t for t in get_default_tools() if t.name in ("terminal", "file_editor")],
         system_prompt=SYSTEM_PROMPT,
+        include_default_tools=['ThinkTool'],  # Remove FinishTool so Agent can't auto-stop
         mcp_config={
             "pwn_tools": {
                 "command": sys.executable,
@@ -159,12 +150,12 @@ def run_openhands_agent(
 ## Evidence
 {_evidence_to_text(evidence, {})}
 
-## Instructions
-1. Use MCP tools to measure any needed facts (offsets, gadgets, format string positions).
-2. Write your exploit as candidate_exploit.py using FileEditorTool.
-3. Run the exploit with TerminalTool: python3 candidate_exploit.py
-4. If it crashes or fails, read the output, diagnose the error, and fix the code.
-5. Iterate until you get a shell or the flag.
+## MANDATORY: You CANNOT stop or finish. Keep trying until you get a shell.
+1. Use MCP tools (measure_offset, find_gadgets, measure_fmt_offset, web_search, etc.) to measure facts.
+2. Write candidate_exploit.py using FileEditorTool.
+3. Run: python3 candidate_exploit.py
+4. If it fails: read the error → search for fixes → edit the code → re-run.
+5. REPEAT until you see a shell prompt ($) or flag output. NEVER stop early.
 
 The binary is at: binary (in the current working directory)"""
 
@@ -174,32 +165,56 @@ The binary is at: binary (in the current working directory)"""
         conversation.run()
     except Exception as exc:
         event_logger("sdk_error", {"error": str(exc)})
-        return _make_report(evidence, run_dir, model, success=False, failure="sdk_error")
+        return _make_report(evidence, run_dir, model, success=False, failure="sdk_error", iterations=[])
 
-    # Extract exploit code from workspace
+    # Collect per-iteration snapshots from workspace + verify each
+    iterations = []
+    success = False
+    final_failure = "no_code"
+
+    # Try named snapshots first
+    for it in range(1, max_iters + 1):
+        snap = ws_dir / "candidate_exploit_iter{}.py".format(it)
+        if not snap.exists():
+            break
+        snap_code = snap.read_text(encoding="utf-8", errors="ignore")
+        dest = run_dir / "candidate_exploit_iter{}.py".format(it)
+        import shutil
+        shutil.copy2(snap, dest)
+        (run_dir / "candidate_exploit.py").write_text(snap_code, encoding="utf-8")
+        v = verify_exploit(run_dir / "candidate_exploit.py", cwd=_repo_root)
+        (run_dir / "verify_iter{}.txt".format(it)).write_text(v.to_json())
+        iterations.append({
+            "iteration": it,
+            "verify": {"success": v.success, "exit_code": v.exit_code,
+                       "stdout_tail": v.stdout_tail, "stderr_tail": v.stderr_tail},
+        })
+        if v.success:
+            success = True
+            break
+        final_failure = v.summary
+
+    # Fallback: use the final candidate_exploit.py
     exploit_path = ws_dir / "candidate_exploit.py"
-    code = ""
-    if exploit_path.exists():
+    if not iterations and exploit_path.exists():
         code = exploit_path.read_text(encoding="utf-8", errors="ignore")
-
-    if not code:
-        return _make_report(evidence, run_dir, model, success=False, failure="no_code")
-
-    # Copy exploit to run_dir
-    (run_dir / "candidate_exploit.py").write_text(code, encoding="utf-8")
-
-    # Verify
-    v = verify_exploit(run_dir / "candidate_exploit.py", cwd=_repo_root)
-    (run_dir / "verify_final.txt").write_text(v.to_json())
+        (run_dir / "candidate_exploit.py").write_text(code, encoding="utf-8")
+        v = verify_exploit(run_dir / "candidate_exploit.py", cwd=_repo_root)
+        (run_dir / "verify_final.txt").write_text(v.to_json())
+        iterations = [{
+            "iteration": 1,
+            "verify": {"success": v.success, "exit_code": v.exit_code,
+                       "stdout_tail": v.stdout_tail, "stderr_tail": v.stderr_tail},
+        }]
+        success = v.success
+        final_failure = "" if v.success else v.summary
 
     return _make_report(
-        evidence,
-        run_dir,
-        model,
-        success=v.success,
-        failure="" if v.success else v.summary,
-        iterations=1,
+        evidence, run_dir, model,
+        success=success, failure=final_failure,
+        iterations=iterations,
     )
+
 
 
 def _make_report(
@@ -209,7 +224,7 @@ def _make_report(
     *,
     success: bool,
     failure: str,
-    iterations: int = 0,
+    iterations: list,
 ) -> Dict[str, Any]:
     return {
         "run_id": run_dir.name,
@@ -219,10 +234,10 @@ def _make_report(
         "problem": evidence.problem_path,
         "binary": evidence.binary.path,
         "success": success,
-        "final_iteration": iterations,
+        "final_iteration": len(iterations),
         "model_roles": {"agent_model": model},
         "fact_store": {},
-        "iterations": [{"verify": {"success": success, "exit_code": 0}}],
+        "iterations": iterations or [{"verify": {"success": success, "exit_code": 0}}],
         "metrics": {"final_failure_class": failure},
     }
 
@@ -264,7 +279,7 @@ def main() -> None:
     (rd / "evidence.json").write_text(ev.to_json())
     pt = _load_problem_text(str(root / args.problem))
 
-    rpt = run_openhands_agent(ev, pt, rd, log_event)
+    rpt = run_openhands_agent(ev, pt, rd, log_event, max_iters=args.max_iters)
 
     _save_json(rd / "run_report.json", rpt)
 

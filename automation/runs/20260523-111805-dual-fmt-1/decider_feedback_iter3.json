@@ -1,0 +1,6 @@
+{
+  "failure": "fact_store is not defined, likely due to missing import or incorrect usage",
+  "next_action": "",
+  "notes": [],
+  "value_score": 0
+}

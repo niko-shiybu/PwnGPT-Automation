@@ -1,0 +1,8 @@
+{
+  "failure": "line 16: p32(-559038737) raises a struct.error because the argument is out of range for a 32-bit signed integer",
+  "next_action": "replace p32(-559038737) with p32(0xdeadbeef) or another valid 32-bit value",
+  "notes": [
+    "TAG: invalid_argument"
+  ],
+  "value_score": 0
+}

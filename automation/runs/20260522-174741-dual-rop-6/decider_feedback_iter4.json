@@ -1,0 +1,6 @@
+{
+  "failure": "The exploit is using the wrong addresses for system and /bin/sh from libc, which are not properly leaked or calculated.",
+  "next_action": "Leak a libc address (e.g., puts) to calculate the base address of libc, then use that to find the correct addresses for system and /bin/sh. Ensure the ROP chain is correctly built with the leaked addresses.",
+  "notes": [],
+  "value_score": 0
+}

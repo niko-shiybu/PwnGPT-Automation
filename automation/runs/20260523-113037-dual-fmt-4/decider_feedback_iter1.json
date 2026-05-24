@@ -1,0 +1,6 @@
+{
+  "failure": "The exploit is causing a segmentation fault, likely due to an incorrect format string or payload.",
+  "next_action": "Review the format string payload and ensure that the offsets and addresses are correctly calculated. Additionally, verify that the leaked address is being properly used to calculate the libc base. Consider using a more robust method to leak the libc address and ensure that the payload is correctly overwriting the GOT entry.",
+  "notes": [],
+  "value_score": 0
+}

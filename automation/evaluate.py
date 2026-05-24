@@ -196,7 +196,7 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.agent == "openhands":
-        args.orchestrator = "automation/openhands_runner.py"
+        args.orchestrator = "automation/openhands_agent.py"
 
     repo_root = Path(args.repo_root).resolve()
     manifest_path = Path(args.manifest).resolve()

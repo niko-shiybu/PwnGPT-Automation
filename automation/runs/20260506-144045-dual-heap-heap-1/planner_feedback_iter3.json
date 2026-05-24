@@ -1,0 +1,27 @@
+{
+  "iteration": 3,
+  "strategy_summary": "通过手动交互记录堆操作的行为，确认分配和释放行为是否符合预期，并判断是否存在use-after-free漏洞。如果存在use-after-free漏洞，则可以进一步利用该漏洞覆盖函数指针。",
+  "measurements": [
+    {
+      "id": 1,
+      "description": "使用run_binary_with_payload手动交互并记录堆操作的行为",
+      "reason": "确认分配和释放行为是否符合预期，判断是否存在use-after-free漏洞",
+      "priority": "high"
+    },
+    {
+      "id": 2,
+      "description": "确认堆题菜单的交互顺序和各输入含义",
+      "reason": "需要正确驱动程序进入目标状态",
+      "priority": "high"
+    },
+    {
+      "id": 3,
+      "description": "确认关键堆操作的运行轨迹",
+      "reason": "判断分配释放行为是否符合预期",
+      "priority": "medium"
+    }
+  ],
+  "notes": [
+    "DECIDER_MANDATORY: 当前策略需要通过手动交互记录堆操作的行为，以确认分配和释放行为是否符合预期，并判断是否存在use-after-free漏洞。"
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "failure": "fact_store is not defined, which is required to access the gadgets",
+  "next_action": "",
+  "notes": [],
+  "value_score": 0
+}

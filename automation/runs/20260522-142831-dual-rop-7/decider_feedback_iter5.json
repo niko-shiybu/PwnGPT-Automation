@@ -1,0 +1,8 @@
+{
+  "failure": "line 7: fact_store is not defined, which causes a NameError",
+  "next_action": "define fact_store with the necessary gadgets before using it",
+  "notes": [
+    "TAG: undefined_variable"
+  ],
+  "value_score": 0
+}

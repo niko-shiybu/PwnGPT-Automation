@@ -1,0 +1,8 @@
+{
+  "iteration": 4,
+  "strategy_summary": "Since the stack is executable and there is no NX, we can craft a ret2shellcode exploit. We will overflow the buffer with a NOP sled, followed by our shellcode, and then overwrite the return address with an address within the NOP sled. The offset to the return address has already been measured as 24 bytes.",
+  "measurements": [],
+  "notes": [
+    "agent_strategy_response"
+  ]
+}

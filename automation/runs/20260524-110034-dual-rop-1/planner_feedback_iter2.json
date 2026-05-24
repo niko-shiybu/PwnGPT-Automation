@@ -1,0 +1,8 @@
+{
+  "iteration": 2,
+  "strategy_summary": "The binary is a 32-bit ELF with NX enabled and no PIE. The vulnerability is a stack overflow in the `vulnerable_function` which reads 256 bytes into a 136-byte buffer. We can use ROP to call the `not_called` function, which calls `system('/bin/bash')`. We need to find the offset to control EIP, and then we will build a ROP chain to call `not_called`.",
+  "measurements": [],
+  "notes": [
+    "agent_strategy_response"
+  ]
+}
