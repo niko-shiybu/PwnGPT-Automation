@@ -49,6 +49,4 @@ retrieve/
 └── recipe_extractor.py         # Exploit recipe extraction
 ```
 
-## Challenge Dataset
 
-19 CTF challenges under `pwn/`: ROP (1-10), FMT (1-5), INT (1-2), HEAP (1-2).
