@@ -1,8 +1,0 @@
-{
-  "failure": "The shellcode is not being executed, likely due to the stack being non-executable. The binary has NX enabled, so the shellcode cannot be executed directly on the stack.",
-  "next_action": "Use a ROP chain to call mprotect to make the stack executable, then place the shellcode in the stack and jump to it.",
-  "notes": [
-    "TAG: NX_ENABLED"
-  ],
-  "value_score": 0
-}

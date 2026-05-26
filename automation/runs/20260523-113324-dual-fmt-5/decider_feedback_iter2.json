@@ -1,6 +1,0 @@
-{
-  "failure": "The exploit is causing a segmentation fault, likely due to incorrect payload or memory corruption.",
-  "next_action": "Review the format string payload and ensure that the offsets and addresses are correctly calculated. Additionally, check if the payload is properly aligned and does not overwrite critical data. Consider using a debugger to step through the exploit and identify the exact point of failure.",
-  "notes": [],
-  "value_score": 0
-}

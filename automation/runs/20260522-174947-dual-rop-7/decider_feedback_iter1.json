@@ -1,6 +1,0 @@
-{
-  "failure": "fact_store is not defined, which is required to get the gadgets and offset",
-  "next_action": "Define fact_store with the necessary values for gadgets and offset. Ensure that the fact_store is properly populated with the required information before using it in the exploit.",
-  "notes": [],
-  "value_score": 0
-}

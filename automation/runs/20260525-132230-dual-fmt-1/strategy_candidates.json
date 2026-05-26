@@ -1,0 +1,305 @@
+{
+  "challenge_fingerprint": {
+    "arch": "i386",
+    "bits": 32,
+    "bug_type": "format_string",
+    "mitigations": {
+      "canary": true,
+      "nx": true,
+      "pie": false,
+      "relro": "partial"
+    },
+    "imports": [
+      "printf",
+      "puts",
+      "read",
+      "system",
+      "__stack_chk_fail",
+      "getegid",
+      "__libc_start_main",
+      "setresgid"
+    ],
+    "plt": {
+      "printf": "0x80483f0",
+      "puts": "0x8048420",
+      "read": "0x80483e0",
+      "system": "0x8048430"
+    },
+    "got": {
+      "printf": "0x804a004",
+      "puts": "0x804a010",
+      "read": "0x804a000",
+      "system": "0x804a014"
+    },
+    "libc_provided": true,
+    "offset_status": "candidate_only"
+  },
+  "warnings": [],
+  "search_plan": {
+    "queries": [
+      {
+        "query": "i386 32 bit format string GOT overwrite pwntools",
+        "priority": 1.0,
+        "purpose": "Primary: format string GOT overwrite"
+      },
+      {
+        "query": "i386 32 bit format string info leak libc base pwntools",
+        "priority": 0.9,
+        "purpose": "Format string libc leak"
+      },
+      {
+        "query": "i386 32 bit stack overflow EIP offset cyclic pattern measurement",
+        "priority": 0.8,
+        "purpose": "General offset measurement techniques"
+      },
+      {
+        "query": "site:docs.pwntools.com ELF plt got i386",
+        "priority": 0.5,
+        "purpose": "pwntools ELF API reference"
+      }
+    ],
+    "sources": [
+      "local_recipe_db",
+      "BraveSearchClient"
+    ]
+  },
+  "candidates": [
+    {
+      "id": "i386_ret2libc_got_leak_puts",
+      "name": "i386 ret2libc via puts@plt GOT leak",
+      "technique": "ret2libc",
+      "score": 0.6175,
+      "priority": "high",
+      "reason": "ret2libc technique for i386 format_string",
+      "preconditions": [
+        "control_eip",
+        "has_import:puts",
+        "has_got:puts",
+        "has_reentry_function",
+        "libc_available"
+      ],
+      "required_measurements": [
+        "verified_eip_offset",
+        "puts_plt",
+        "puts_got",
+        "vulnerable_function",
+        "libc_puts",
+        "libc_system",
+        "libc_binsh"
+      ],
+      "payload_shape": [
+        "padding + puts@plt + vulnerable_function + puts@got",
+        "padding + system + exit + binsh"
+      ],
+      "failure_signatures": {
+        "EOF_BEFORE_LEAK": "offset, PLT address, or reentry address may be wrong",
+        "BAD_LIBC_BASE": "wrong libc or wrong leaked symbol parsing",
+        "NO_SHELL": "system/binsh address wrong or interaction issue"
+      },
+      "source_refs": [
+        {
+          "type": "local_recipe_db",
+          "url": null,
+          "title": "local built-in recipe"
+        }
+      ],
+      "not_applicable_if": [],
+      "scoring_breakdown": {
+        "arch_match": 0.03,
+        "no_pie_plt_got": 0.03,
+        "libc_available": 0.05,
+        "has_puts_import": 0.05,
+        "precond_control_eip": 0.0125,
+        "precond_has_import:puts": 0.03,
+        "precond_has_got:puts": 0.03,
+        "precond_has_reentry_function": 0.02,
+        "precond_libc_available": 0.03,
+        "recipe_confidence": 0.085,
+        "source_quality": 0.0
+      }
+    },
+    {
+      "id": "format_string_stack_leak",
+      "name": "format string info leak + ret2libc",
+      "technique": "format_string",
+      "score": 0.5,
+      "priority": "high",
+      "reason": "format_string technique for i386 format_string",
+      "preconditions": [
+        "format_string_vuln",
+        "libc_available",
+        "can_leak_stack_or_libc"
+      ],
+      "required_measurements": [
+        "verified_fmt_offset",
+        "libc_leak_offset",
+        "libc_system",
+        "libc_binsh"
+      ],
+      "payload_shape": [
+        "fmtstr read: %i$p to leak libc base + optional GOT overwrite"
+      ],
+      "failure_signatures": {
+        "LEAK_TOO_SHORT": "wrong fmt offset; increase or try %i$p with different i",
+        "NO_SHELL": "libc base calculation wrong"
+      },
+      "source_refs": [
+        {
+          "type": "local_recipe_db",
+          "url": null,
+          "title": "local built-in recipe"
+        }
+      ],
+      "not_applicable_if": [],
+      "scoring_breakdown": {
+        "arch_match": 0.03,
+        "bug_type_match": 0.05,
+        "no_pie_plt_got": 0.03,
+        "precond_format_string_vuln": 0.03,
+        "precond_libc_available": 0.03,
+        "precond_can_leak_stack_or_libc": 0.025,
+        "recipe_confidence": 0.085,
+        "source_quality": 0.0
+      }
+    },
+    {
+      "id": "format_string_got_leak",
+      "name": "format string GOT overwrite to system",
+      "technique": "format_string",
+      "score": 0.455,
+      "priority": "high",
+      "reason": "format_string technique for i386 format_string",
+      "preconditions": [
+        "format_string_vuln",
+        "has_got:writable",
+        "no_pie_or_pie_leak",
+        "libc_available"
+      ],
+      "required_measurements": [
+        "verified_fmt_offset",
+        "target_got_entry",
+        "libc_system",
+        "libc_binsh_or_input"
+      ],
+      "payload_shape": [
+        "fmtstr_write: low_bytes + high_bytes to GOT entry"
+      ],
+      "failure_signatures": {
+        "SIGSEGV": "fmt offset wrong or GOT address not writable",
+        "NO_SHELL": "system address partially written or wrong GOT entry"
+      },
+      "source_refs": [
+        {
+          "type": "local_recipe_db",
+          "url": null,
+          "title": "local built-in recipe"
+        }
+      ],
+      "not_applicable_if": [],
+      "scoring_breakdown": {
+        "arch_match": 0.03,
+        "bug_type_match": 0.05,
+        "no_pie_plt_got": 0.03,
+        "precond_format_string_vuln": 0.03,
+        "precond_has_got:writable": -0.05,
+        "precond_libc_available": 0.03,
+        "recipe_confidence": 0.085,
+        "source_quality": 0.0
+      }
+    },
+    {
+      "id": "i386_ret2libc_0bc7b7",
+      "name": "i386 ret2libc exploit - return to libc- finding libc's address and finding offsets - Informati",
+      "technique": "ret2libc",
+      "score": 0.3825,
+      "priority": "medium",
+      "reason": "ret2libc technique for i386 format_string",
+      "preconditions": [
+        "control_eip",
+        "has_reentry_function",
+        "libc_available"
+      ],
+      "required_measurements": [
+        "libc_system",
+        "verified_eip_offset",
+        "libc_binsh"
+      ],
+      "payload_shape": [],
+      "failure_signatures": {},
+      "source_refs": [
+        {
+          "type": "web_search",
+          "url": "https://security.stackexchange.com/questions/168101/return-to-libc-finding-libcs-address-and-finding-offsets",
+          "title": "exploit - return to libc- finding libc's address and finding offsets - Information Security Stack Exchange",
+          "source_score": 0.25,
+          "query": "i386 32 bit format string info leak libc base pwntools"
+        }
+      ],
+      "not_applicable_if": [],
+      "scoring_breakdown": {
+        "arch_match": 0.03,
+        "no_pie_plt_got": 0.03,
+        "libc_available": 0.05,
+        "precond_control_eip": 0.0125,
+        "precond_has_reentry_function": 0.02,
+        "precond_libc_available": 0.03,
+        "recipe_confidence": 0.065,
+        "source_quality": 0.025
+      }
+    },
+    {
+      "id": "i386_ret2libc_got_leak_write",
+      "name": "i386 ret2libc via write@plt GOT leak",
+      "technique": "ret2libc",
+      "score": 0.37,
+      "priority": "medium",
+      "reason": "ret2libc technique for i386 format_string",
+      "preconditions": [
+        "control_eip",
+        "has_import:write",
+        "has_got:write",
+        "has_reentry_function",
+        "libc_available"
+      ],
+      "required_measurements": [
+        "verified_eip_offset",
+        "write_plt",
+        "write_got",
+        "vulnerable_function",
+        "libc_write",
+        "libc_system",
+        "libc_binsh"
+      ],
+      "payload_shape": [
+        "padding + write@plt + vulnerable_function + 1 + write@got + 4",
+        "padding + system + exit + binsh"
+      ],
+      "failure_signatures": {
+        "EOF_BEFORE_LEAK": "offset, PLT address, or reentry address may be wrong",
+        "LEAK_TOO_SHORT": "recv logic wrong; use recvn(4)",
+        "BAD_LIBC_BASE": "wrong libc or wrong leaked symbol parsing",
+        "NO_SHELL": "system/binsh address wrong or interaction issue"
+      },
+      "source_refs": [
+        {
+          "type": "local_recipe_db",
+          "url": null,
+          "title": "local built-in recipe"
+        }
+      ],
+      "not_applicable_if": [],
+      "scoring_breakdown": {
+        "arch_match": 0.03,
+        "no_pie_plt_got": 0.03,
+        "libc_available": 0.05,
+        "precond_control_eip": 0.0125,
+        "precond_has_import:write": -0.0875,
+        "precond_has_got:write": -0.05,
+        "precond_has_reentry_function": 0.02,
+        "precond_libc_available": 0.03,
+        "recipe_confidence": 0.085,
+        "source_quality": 0.0
+      }
+    }
+  ]
+}

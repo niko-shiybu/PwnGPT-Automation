@@ -1,8 +1,0 @@
-{
-  "iteration": 3,
-  "strategy_summary": "The strategy is to use a format string vulnerability in the printf function to overwrite the GOT entry of system with the address of backdoor. Since the binary does not have PIE, we can directly use the static address of backdoor. We will first leak a libc address to defeat ASLR and then calculate the offsets for system and other functions. Finally, we will overwrite the system GOT entry with the backdoor address.",
-  "measurements": [],
-  "notes": [
-    "agent_strategy_response"
-  ]
-}

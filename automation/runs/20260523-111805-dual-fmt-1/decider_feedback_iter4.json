@@ -1,6 +1,0 @@
-{
-  "failure": "The exploit is failing due to a segmentation fault, likely caused by an incorrect format string payload or address.",
-  "next_action": "Re-evaluate the format string payload and the addresses used. Ensure that the payload correctly overwrites the target address with the desired value. Additionally, verify that the offsets and addresses are correct and that the format string payload is properly constructed.",
-  "notes": [],
-  "value_score": 0
-}

@@ -1,0 +1,8 @@
+{
+  "iteration": 6,
+  "strategy_summary": "The binary is vulnerable to a format string attack. We can use the format string vulnerability to leak the address of 'puts' from the GOT, and then calculate the base address of libc. After that, we can overwrite a function pointer or return address with the address of 'system' and get a shell.",
+  "measurements": [],
+  "notes": [
+    "agent_strategy_response"
+  ]
+}

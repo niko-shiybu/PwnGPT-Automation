@@ -1,8 +1,0 @@
-{
-  "failure": "The exploit is failing because the arguments for get_flag are not correct. The values 814536271 and 425138641 are not the expected arguments for the get_flag function.",
-  "next_action": "line 14: change p32(814536271) to p32(0xdeadbeef), line 16: change p32(425138641) to p32(0xcafebabe)",
-  "notes": [
-    "TAG: incorrect_arguments"
-  ],
-  "value_score": 0
-}

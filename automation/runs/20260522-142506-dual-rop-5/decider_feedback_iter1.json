@@ -1,8 +1,0 @@
-{
-  "failure": "The function 'callsystem' does not exist in the binary, causing a segmentation fault. This is due to an incorrect symbol name on line 14.",
-  "next_action": "line 14: change p64(binary.symbols['callsystem']) to p64(binary.symbols['system'])",
-  "notes": [
-    "TAG: wrong_symbol"
-  ],
-  "value_score": 0
-}

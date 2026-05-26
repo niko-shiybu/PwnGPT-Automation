@@ -1,0 +1,8 @@
+{
+  "iteration": 3,
+  "strategy_summary": "The strategy is to use a ret2libc attack. We will first leak the address of write() from the GOT, then calculate the base address of libc. With the base address, we can find the addresses of system() and '/bin/sh' in libc. Finally, we will craft a ROP chain to call system('/bin/sh') to get a shell.",
+  "measurements": [],
+  "notes": [
+    "agent_strategy_response"
+  ]
+}

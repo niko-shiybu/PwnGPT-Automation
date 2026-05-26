@@ -1,0 +1,8 @@
+{
+  "iteration": 3,
+  "strategy_summary": "The binary is vulnerable to a buffer overflow, and we can use ROP to leak a libc address and then return into libc. We will first leak the address of puts from the GOT, then calculate the base address of libc, and finally call system with the string '/bin/sh'.",
+  "measurements": [],
+  "notes": [
+    "agent_strategy_response"
+  ]
+}

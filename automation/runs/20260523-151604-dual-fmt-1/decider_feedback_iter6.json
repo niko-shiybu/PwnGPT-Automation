@@ -1,6 +1,0 @@
-{
-  "failure": "line 10: the value of printf_got is hardcoded, which is incorrect. It should be obtained from binary.got['printf'] to ensure it's the correct address for the current binary.",
-  "next_action": "",
-  "notes": [],
-  "value_score": 0
-}

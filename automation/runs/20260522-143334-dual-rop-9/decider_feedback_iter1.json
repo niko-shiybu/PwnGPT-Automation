@@ -1,8 +1,0 @@
-{
-  "failure": "The exploit is failing due to a segmentation fault (SIGSEGV), which indicates that the return address or one of the gadget addresses is incorrect. The `ret` address at line 10 is likely incorrect, as it should point to a valid return address in the binary.",
-  "next_action": "line 10: change ret = p32(0x8048196) to ret = p32(0x80484b6)",
-  "notes": [
-    "TAG: wrong_return_address"
-  ],
-  "value_score": 0
-}

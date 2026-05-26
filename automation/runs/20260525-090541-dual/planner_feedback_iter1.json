@@ -1,0 +1,25 @@
+{
+  "iteration": 1,
+  "strategy_summary": "通过栈溢出覆盖返回地址，利用 ROP 技术调用 not_called 函数执行 system(\"/bin/bash\")。",
+  "measurements": [
+    {
+      "id": 1,
+      "description": "确认覆盖返回地址前需要填充的字节数",
+      "reason": "这是构造 ROP 链的前提",
+      "priority": "high"
+    },
+    {
+      "id": 2,
+      "description": "确认可用的关键 gadget 和调用原语",
+      "reason": "决定 ROP 链如何搭建",
+      "priority": "high"
+    },
+    {
+      "id": 3,
+      "description": "确认目标程序的指针宽度和体系结构位数",
+      "reason": "决定地址打包方式",
+      "priority": "medium"
+    }
+  ],
+  "notes": []
+}

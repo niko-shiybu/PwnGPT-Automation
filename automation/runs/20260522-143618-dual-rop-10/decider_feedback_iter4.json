@@ -1,8 +1,0 @@
-{
-  "failure": "line 26: u64(p.recvline().strip().ljust(8, b'\\x00')) fails because it reads fewer than 8 bytes, causing a struct.error",
-  "next_action": "line 26: change u64(p.recvline().strip().ljust(8, b'\\x00')) to u64(p.recvline().strip().ljust(8, b'\\x00')[:8])",
-  "notes": [
-    "TAG: struct.error"
-  ],
-  "value_score": 0
-}

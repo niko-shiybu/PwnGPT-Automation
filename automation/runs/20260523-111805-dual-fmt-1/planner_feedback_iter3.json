@@ -1,8 +1,0 @@
-{
-  "iteration": 3,
-  "strategy_summary": "The binary is vulnerable to a format string attack. We can use the format string vulnerability to leak libc addresses and then overwrite the GOT entry of 'printf' with the address of 'system'. This will allow us to call 'system' when 'printf' is called, which will give us a shell. We need to measure the offset to control the stack and the libc base address.",
-  "measurements": [],
-  "notes": [
-    "agent_strategy_response"
-  ]
-}

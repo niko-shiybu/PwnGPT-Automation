@@ -1,6 +1,0 @@
-{
-  "failure": "line 10: the payload is missing a 'ret' gadget to align the stack before calling system. The current payload does not account for the stack alignment, which causes a SIGSEGV.",
-  "next_action": "",
-  "notes": [],
-  "value_score": 0
-}

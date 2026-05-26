@@ -1,0 +1,8 @@
+{
+  "iteration": 2,
+  "strategy_summary": "We will use a format string vulnerability to leak the address of a function in libc, such as printf, and then calculate the base address of libc. After that, we can overwrite the GOT entry of a function (e.g., read) with the address of the backdoor function to get a shell.",
+  "measurements": [],
+  "notes": [
+    "agent_strategy_response"
+  ]
+}

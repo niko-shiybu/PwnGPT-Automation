@@ -1,0 +1,8 @@
+{
+  "iteration": 1,
+  "strategy_summary": "The binary is vulnerable to a format string attack. The main function reads 80 bytes into a 80-byte buffer, which can be overflowed to control the EIP. We will use the format string vulnerability to leak the address of puts from the GOT, then use that to calculate the base address of libc. With the base address, we can find the addresses of system and /bin/sh, and overwrite the return address to call system('/bin/sh').",
+  "measurements": [],
+  "notes": [
+    "agent_strategy_response"
+  ]
+}

@@ -1,6 +1,0 @@
-{
-  "failure": "The exploit is failing due to a segmentation fault, likely due to an incorrect format string payload or an issue with the address calculations.",
-  "next_action": "Review the format string payload and the address calculations. Ensure that the payload correctly overwrites the GOT entry for printf with the system address. Additionally, verify that the leaked libc address is correct and that the offsets are properly calculated.",
-  "notes": [],
-  "value_score": 0
-}

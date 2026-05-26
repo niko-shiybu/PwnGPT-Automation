@@ -1,8 +1,0 @@
-{
-  "iteration": 2,
-  "strategy_summary": "The strategy is to use a format string vulnerability in the printf call to overwrite the GOT entry of read with the address of backdoor. Since the binary does not have a stack canary and has partial RELRO, we can directly write to the GOT entries. We will first measure the offset to control the format string argument and then craft the payload to overwrite the read GOT entry.",
-  "measurements": [],
-  "notes": [
-    "agent_strategy_response"
-  ]
-}

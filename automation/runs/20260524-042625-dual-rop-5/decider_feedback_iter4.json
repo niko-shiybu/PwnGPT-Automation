@@ -1,6 +1,0 @@
-{
-  "failure": "line 12: the ROP chain is missing a 'ret' gadget to align the stack before calling 'system'. The 'pop_rdi_ret' gadget is used, but it does not align the stack properly. This causes a SIGSEGV when the 'system' function is called.",
-  "next_action": "",
-  "notes": [],
-  "value_score": 0
-}

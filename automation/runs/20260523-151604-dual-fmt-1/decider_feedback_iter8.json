@@ -1,6 +1,0 @@
-{
-  "failure": "line 14: The payload is not correctly formatted, leading to a SIGSEGV. The address for the printf_got and x_addr are hardcoded, which may not be correct. Additionally, the format string payload might be incorrect, causing the program to crash.",
-  "next_action": "Use binary.got['printf'] and binary.symbols['x'] instead of hardcoding the addresses. Also, ensure the format string payload is correctly constructed.",
-  "notes": [],
-  "value_score": 0
-}

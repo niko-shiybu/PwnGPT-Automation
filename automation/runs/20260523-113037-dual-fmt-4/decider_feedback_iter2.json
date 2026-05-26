@@ -1,6 +1,0 @@
-{
-  "failure": "The exploit is causing a segmentation fault, likely due to an incorrect format string payload or offset.",
-  "next_action": "Re-evaluate the format string payload and the offset. Ensure that the payload correctly overwrites the GOT entry of 'printf' with the address of 'backdoor'. Additionally, verify the offset and the format string parameters to ensure they are correct for the binary.",
-  "notes": [],
-  "value_score": 0
-}

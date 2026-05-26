@@ -1,8 +1,0 @@
-{
-  "failure": "The return address is set to a function that does not lead to a successful exploit. The target function 'not_called' at 0x80484a4 is not the intended function to call for gaining control over the execution flow.",
-  "next_action": "line 12: change not_called = p32(0x80484a4) to win_addr = p32(binary.symbols['win']) and use win_addr in the payload instead of not_called",
-  "notes": [
-    "TAG: wrong_function_called"
-  ],
-  "value_score": 0
-}

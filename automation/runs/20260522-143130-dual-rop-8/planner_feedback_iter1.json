@@ -1,8 +1,0 @@
-{
-  "iteration": 1,
-  "strategy_summary": "Since the stack is executable and there is no NX, we can craft a ret2shellcode exploit. We will overflow the buffer and overwrite the return address with the address of our shellcode. The shellcode will be a simple one that spawns a shell.",
-  "measurements": [],
-  "notes": [
-    "agent_strategy_response"
-  ]
-}

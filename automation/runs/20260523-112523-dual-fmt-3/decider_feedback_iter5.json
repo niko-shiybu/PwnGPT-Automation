@@ -1,6 +1,0 @@
-{
-  "failure": "The format string used to leak the libc address is incorrect, leading to an invalid literal for int() with base 16.",
-  "next_action": "Adjust the format string in the edit_account function to correctly leak the libc address. Ensure that the leaked values are properly formatted and can be converted to integers. Additionally, verify the offsets and the one_gadget address for the specific libc version.",
-  "notes": [],
-  "value_score": 0
-}

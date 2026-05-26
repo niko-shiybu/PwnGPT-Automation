@@ -1,6 +1,0 @@
-{
-  "failure": "The exploit is failing due to a segmentation fault, likely caused by an incorrect format string payload or an issue with the addresses used in the payload.",
-  "next_action": "Review the format string payload and ensure that the offsets and addresses are correct. Additionally, check if there are any constraints or checks in the binary that need to be bypassed. Consider using a debugger to step through the exploit and identify where it fails.",
-  "notes": [],
-  "value_score": 0
-}

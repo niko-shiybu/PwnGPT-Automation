@@ -1,0 +1,8 @@
+{
+  "iteration": 2,
+  "strategy_summary": "The strategy is to use a ret2libc attack. First, we will leak the address of 'write' from the GOT using the 'write' function itself. Then, we will calculate the base address of libc and find the offsets for 'system' and '/bin/sh'. Finally, we will craft the payload to overwrite the return address with the address of 'system' and pass the address of '/bin/sh' as an argument.",
+  "measurements": [],
+  "notes": [
+    "agent_strategy_response"
+  ]
+}

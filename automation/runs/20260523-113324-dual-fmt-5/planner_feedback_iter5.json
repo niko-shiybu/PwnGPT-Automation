@@ -1,8 +1,0 @@
-{
-  "iteration": 5,
-  "strategy_summary": "The binary is vulnerable to a format string attack due to the unsanitized use of printf. We can overwrite the GOT entry for printf with the address of system, and then call printf with '/bin/sh' as an argument to get a shell. Since the binary has partial RELRO, we need to find the offset to control the stack and overwrite the GOT entry. We will also need to leak a libc address to calculate the base address of libc.",
-  "measurements": [],
-  "notes": [
-    "agent_strategy_response"
-  ]
-}

@@ -1,8 +1,0 @@
-{
-  "failure": "line 17: 'puts' is not found in the binary's PLT, causing a KeyError",
-  "next_action": "line 17: change 'puts_plt = binary.plt['puts']' to 'puts_plt = binary.symbols['puts']'",
-  "notes": [
-    "TAG: symbol_not_found"
-  ],
-  "value_score": 0
-}

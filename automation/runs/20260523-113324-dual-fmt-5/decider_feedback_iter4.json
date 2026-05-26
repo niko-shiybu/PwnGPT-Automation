@@ -1,6 +1,0 @@
-{
-  "failure": "The exploit is causing a segmentation fault, likely due to incorrect address or payload size.",
-  "next_action": "Re-evaluate the payload construction and ensure that the addresses and offsets are correct. Verify the format string payload and the buffer size. Additionally, check if the libc base address is correctly calculated and if the system offset is accurate.",
-  "notes": [],
-  "value_score": 0
-}

@@ -1,8 +1,0 @@
-{
-  "iteration": 2,
-  "strategy_summary": "The binary is vulnerable to a format string attack. The goal is to overwrite the `x` variable, which is checked in the main function, with the value 4. This will trigger the call to `system('/bin/sh')`. Since the binary has a stack canary and NX, we need to carefully craft our payload to avoid overwriting the canary and to use the available PLT entries for system calls. We will first measure the offset to control the format string and then use the `printf` function to overwrite the `x` variable.",
-  "measurements": [],
-  "notes": [
-    "agent_strategy_response"
-  ]
-}

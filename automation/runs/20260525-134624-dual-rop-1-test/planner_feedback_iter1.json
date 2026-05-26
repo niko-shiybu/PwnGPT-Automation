@@ -1,0 +1,8 @@
+{
+  "iteration": 1,
+  "strategy_summary": "The strategy is to use a ret2libc attack. First, we will leak the address of 'write' in libc by calling it with a known argument. Then, we will calculate the base address of libc and call 'system' with the address of '/bin/sh'. We need to measure the EIP offset, find the addresses of 'write' in the PLT and GOT, and the address of 'vulnerable_function'.",
+  "measurements": [],
+  "notes": [
+    "agent_strategy_response"
+  ]
+}

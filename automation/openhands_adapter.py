@@ -89,7 +89,6 @@ def load_evidence(evidence_path: str) -> Evidence:
 
 def save_exploit_code(output_path: str, code: str) -> None:
     """Write exploit code to file after deterministic hardening."""
-    from automation.orchestrate_dual_llm import _harden_exploit_code
     import os
 
     run_dir = os.path.dirname(output_path)
@@ -100,7 +99,11 @@ def save_exploit_code(output_path: str, code: str) -> None:
     cleaned = _extract_code(code)
 
     if evidence:
-        cleaned = _harden_exploit_code(cleaned, evidence)
+        try:
+            from automation.exploit.harden import harden_exploit_code as _hec
+            cleaned = _hec(cleaned, evidence)
+        except Exception:
+            pass
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:

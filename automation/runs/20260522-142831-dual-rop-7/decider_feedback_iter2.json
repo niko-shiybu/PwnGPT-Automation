@@ -1,8 +1,0 @@
-{
-  "failure": "The payload is missing a 'ret' gadget to align the stack before calling 'system'. This causes a SIGSEGV.",
-  "next_action": "Add p64(ret) after p64(pop_rdi_ret) and before p64(bin_sh_addr) in the second payload.",
-  "notes": [
-    "TAG: stack_alignment"
-  ],
-  "value_score": 0
-}

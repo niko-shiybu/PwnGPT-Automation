@@ -1,8 +1,0 @@
-{
-  "failure": "line 14: 'binary.got['read']' is an integer, not a byte string, so it does not have the 'ljust' method",
-  "next_action": "line 14: change 'u64(binary.got['read'].ljust(8, b'\\x00')) - libc.symbols['read']' to 'binary.got['read'] - libc.symbols['read']'",
-  "notes": [
-    "TAG: incorrect_type"
-  ],
-  "value_score": 0
-}

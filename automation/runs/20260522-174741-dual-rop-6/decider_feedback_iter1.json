@@ -1,6 +1,0 @@
-{
-  "failure": "fact_store is not defined, it should be loaded from evidence",
-  "next_action": "",
-  "notes": [],
-  "value_score": 0
-}

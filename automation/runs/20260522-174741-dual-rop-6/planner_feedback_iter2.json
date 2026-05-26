@@ -1,8 +1,0 @@
-{
-  "iteration": 2,
-  "strategy_summary": "The binary is a 64-bit ELF with NX enabled and no PIE. The vulnerable function reads 512 bytes into a 128-byte buffer, causing a stack overflow. We can use this to overwrite the return address. Since there is no RELRO, we can overwrite the GOT entries. We will use ROP to call system('/bin/sh') by overwriting the GOT entry of 'read' with the address of 'system'.",
-  "measurements": [],
-  "notes": [
-    "agent_strategy_response"
-  ]
-}

@@ -1,0 +1,27 @@
+{
+  "iteration": 2,
+  "strategy_summary": "通过ROP链覆盖返回地址，利用已知的gadget来执行任意代码。首先需要确认二进制文件中是否存在所需的gadget，特别是'pop eax; ret'。如果找不到该gadget，则考虑使用其他gadget或调整策略。",
+  "measurements": [
+    {
+      "id": 1,
+      "description": "使用ROPgadget工具查找二进制文件中的所有可用gadget",
+      "reason": "确认是否存在'pop eax; ret' gadget或其他可替代的gadget",
+      "priority": "high"
+    },
+    {
+      "id": 2,
+      "description": "确认覆盖返回地址前需要填充的字节数",
+      "reason": "这是构造ROP链的前提",
+      "priority": "high"
+    },
+    {
+      "id": 3,
+      "description": "确认目标程序的指针宽度和体系结构位数",
+      "reason": "决定地址打包方式",
+      "priority": "medium"
+    }
+  ],
+  "notes": [
+    "DECIDER_DIAGNOSED_CODE_BUG: let exploit writer fix code per decider instruction"
+  ]
+}

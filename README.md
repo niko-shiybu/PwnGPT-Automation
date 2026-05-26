@@ -1,11 +1,8 @@
 # PwnGPT
-Caputre the flag with Large Language Models. Constructed by langgraph, and I learn a lot from langgraph doument, thanks for them.
 
-## New: Tri-LLM Automation Framework (`automation/`)
+LLM-based automatic CTF binary exploitation.
 
-A modular pipeline for automatic exploit generation with Planner, Executor, ExploitWriter, Verifier, and Decider stages.
-
-### Quick Start
+## Quick Start
 
 ```bash
 source .venv/bin/activate
@@ -18,30 +15,40 @@ python3 automation/openhands_agent.py \
   --challenge-type rop --max-iters 5 \
   --repo-root /path/to/PwnGPT
 
-
+# Batch evaluation
+python3 automation/evaluate.py \
+  --manifest automation/benchmarks/manifest_rop.json \
+  --agent openhands --max-iters 5 --timeout 0
 ```
 
-### Configuration
+## Configuration
 
-Edit `automation/local_config.py` for API keys and model settings.
+Copy `automation/local_config.example.py` to `automation/local_config.py` and fill in API keys.
 
-### Framework Architecture
+## Architecture
 
 ```
 automation/
-├── openhands_agent.py          # 5-step pipeline (Planner→Executor→ExploitWriter→Verify→Decider)
-├── orchestrator_dual_llm.py    # Original tri-LLM orchestrator
+├── openhands_agent.py          # Main pipeline: COLLECT → RETRIEVE → PLAN → MEASURE → WRITE → VERIFY → FIX
 ├── evaluate.py                 # Batch evaluation runner
-├── llm_client.py               # LLM client (OpenAI-compatible API)
-├── local_config.py             # Configuration
+├── llm_client.py               # LLM client (OpenAI-compatible)
 ├── schemas.py                  # Data structures
-├── tools/tool_runner.py        # Deterministic measurement tools
-├── collector/evidence_collector.py  # Binary evidence collection
-├── planner/planner_agent.py    # Strategy planning prompts
+├── openhands_adapter.py        # Evidence/text conversion + exploit hardening
+├── collect/evidence_collector.py  # Binary evidence collection
 ├── executor/executor_agent.py  # Measurement dispatch
-├── decider/decider_agent.py    # Failure diagnosis (tri-LLM)
 ├── verify/verifier.py          # Exploit verification
-└── audit/                      # Static code audit
+├── audit/                      # Static code audit
+├── exploit/harden.py           # Deterministic exploit code hardening
+└── tools/tool_runner.py        # Measurement tools (GDB offset, ROP gadgets, FMT offset)
+
+retrieve/
+├── retrieve_main.py            # Strategy retrieval from knowledge base
+├── web_search.py               # Web search client
+├── query_builder.py            # Evidence → search query construction
+├── strategy_scorer.py          # Candidate strategy scoring
+└── recipe_extractor.py         # Exploit recipe extraction
 ```
 
+## Challenge Dataset
 
+19 CTF challenges under `pwn/`: ROP (1-10), FMT (1-5), INT (1-2), HEAP (1-2).

@@ -1,8 +1,0 @@
-{
-  "iteration": 5,
-  "strategy_summary": "Since the binary has an executable stack and no NX, we can use a ret2shellcode technique. We will craft a shellcode to spawn a shell and overwrite the return address with the address of our shellcode. The offset to the return address is already known to be 24 bytes.",
-  "measurements": [],
-  "notes": [
-    "agent_strategy_response"
-  ]
-}

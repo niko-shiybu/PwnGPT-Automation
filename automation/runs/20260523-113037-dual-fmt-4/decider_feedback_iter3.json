@@ -1,6 +1,0 @@
-{
-  "failure": "The exploit is not properly staged, and the interactive shell is started before the payload is sent.",
-  "next_action": "Reorder the code to ensure that the payload is sent after the stage marker. Specifically, move the print statement for the stage marker before sending the payload, and ensure the interactive shell is started after the payload is sent.",
-  "notes": [],
-  "value_score": 0
-}

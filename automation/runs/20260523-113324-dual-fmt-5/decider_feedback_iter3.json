@@ -1,6 +1,0 @@
-{
-  "failure": "The payload is not correctly formatted or the offset is incorrect, leading to an infinite loop of the prompt.",
-  "next_action": "Re-evaluate the format string payload and the offset. Ensure that the payload is correctly formatted and the offset is accurate. Additionally, verify that the correct function is being targeted and that the addresses are correct.",
-  "notes": [],
-  "value_score": 0
-}

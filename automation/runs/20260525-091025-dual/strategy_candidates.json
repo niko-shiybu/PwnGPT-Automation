@@ -1,0 +1,355 @@
+{
+  "challenge_fingerprint": {
+    "arch": "i386",
+    "bits": 32,
+    "bug_type": "stack_overflow",
+    "mitigations": {
+      "canary": false,
+      "nx": true,
+      "pie": false,
+      "relro": "partial"
+    },
+    "imports": [
+      "read",
+      "write",
+      "system",
+      "getegid",
+      "__libc_start_main",
+      "setresgid"
+    ],
+    "plt": {
+      "read": "0x8048380",
+      "write": "0x80483d0",
+      "system": "0x80483a0"
+    },
+    "got": {
+      "read": "0x804a000",
+      "write": "0x804a014",
+      "system": "0x804a008"
+    },
+    "libc_provided": true,
+    "offset_status": "candidate_only"
+  },
+  "warnings": [
+    "Mitigation conflict: binary_features.canary=True vs checksec=False; using checksec"
+  ],
+  "search_plan": {
+    "queries": [
+      {
+        "query": "i386 ret2libc write@plt leak write@got pwntools",
+        "priority": 1.0,
+        "purpose": "Primary: ret2libc via write@plt GOT leak with provided libc"
+      },
+      {
+        "query": "pwntools i386 32 bit write plt got ret2libc",
+        "priority": 0.9,
+        "purpose": "Alternative phrasing: ret2libc write GOT leak"
+      },
+      {
+        "query": "CTF pwn provided libc ret2libc GOT leak i386 32 bit",
+        "priority": 0.85,
+        "purpose": "General: libc-based ret2libc with GOT leak"
+      },
+      {
+        "query": "site:docs.pwntools.com cyclic_find EIP offset i386",
+        "priority": 0.8,
+        "purpose": "pwntools cyclic_find usage for offset measurement"
+      },
+      {
+        "query": "site:ropemporium.com PLT GOT i386 32 bit ROP",
+        "priority": 0.6,
+        "purpose": "ROP Emporium references for ret2libc"
+      },
+      {
+        "query": "site:docs.pwntools.com ELF plt got i386",
+        "priority": 0.5,
+        "purpose": "pwntools ELF API reference"
+      },
+      {
+        "query": "i386 32 bit one_gadget libc execve pwntools",
+        "priority": 0.4,
+        "purpose": "Secondary: one_gadget approach"
+      }
+    ],
+    "sources": [
+      "local_recipe_db",
+      "BraveSearchClient"
+    ]
+  },
+  "candidates": [
+    {
+      "id": "i386_ret2libc_got_leak_write",
+      "name": "i386 ret2libc via write@plt GOT leak",
+      "technique": "ret2libc",
+      "score": 0.78,
+      "priority": "high",
+      "reason": "ret2libc technique for i386 stack_overflow",
+      "preconditions": [
+        "control_eip",
+        "has_import:write",
+        "has_got:write",
+        "has_reentry_function",
+        "libc_available"
+      ],
+      "required_measurements": [
+        "verified_eip_offset",
+        "write_plt",
+        "write_got",
+        "vulnerable_function",
+        "libc_write",
+        "libc_system",
+        "libc_binsh"
+      ],
+      "payload_shape": [
+        "padding + write@plt + vulnerable_function + 1 + write@got + 4",
+        "padding + system + exit + binsh"
+      ],
+      "failure_signatures": {
+        "EOF_BEFORE_LEAK": "offset, PLT address, or reentry address may be wrong",
+        "LEAK_TOO_SHORT": "recv logic wrong; use recvn(4)",
+        "BAD_LIBC_BASE": "wrong libc or wrong leaked symbol parsing",
+        "NO_SHELL": "system/binsh address wrong or interaction issue"
+      },
+      "source_refs": [
+        {
+          "type": "local_recipe_db",
+          "url": null,
+          "title": "local built-in recipe"
+        }
+      ],
+      "not_applicable_if": [],
+      "scoring_breakdown": {
+        "arch_match": 0.03,
+        "bug_type_match": 0.05,
+        "no_pie_plt_got": 0.03,
+        "no_canary_rop": 0.05,
+        "libc_available": 0.05,
+        "has_write_import": 0.05,
+        "has_write_got": 0.05,
+        "precond_control_eip": 0.025,
+        "precond_has_import:write": 0.03,
+        "precond_has_got:write": 0.03,
+        "precond_has_reentry_function": 0.02,
+        "precond_libc_available": 0.03,
+        "recipe_confidence": 0.085,
+        "source_quality": 0.0
+      }
+    },
+    {
+      "id": "i386_ret2libc_4225c8",
+      "name": "i386 ret2libc pwnlib.rop.rop — Return Oriented Programming — pwntools 4.15.0 documentation",
+      "technique": "ret2libc",
+      "score": 0.745,
+      "priority": "high",
+      "reason": "ret2libc technique for i386 stack_overflow",
+      "preconditions": [
+        "control_eip",
+        "has_reentry_function",
+        "libc_available",
+        "has_import:write",
+        "has_got:write"
+      ],
+      "required_measurements": [
+        "libc_system",
+        "verified_eip_offset",
+        "write_got",
+        "write_plt",
+        "libc_binsh",
+        "libc_write"
+      ],
+      "payload_shape": [
+        "padding + write@plt + vulnerable_function + 1 + write@got + 4",
+        "padding + system + exit + binsh"
+      ],
+      "failure_signatures": {},
+      "source_refs": [
+        {
+          "type": "web_search",
+          "url": "https://docs.pwntools.com/en/stable/rop/rop.html",
+          "title": "pwnlib.rop.rop — Return Oriented Programming — pwntools 4.15.0 documentation",
+          "source_score": 1.0,
+          "query": "site:docs.pwntools.com ELF plt got i386"
+        }
+      ],
+      "not_applicable_if": [],
+      "scoring_breakdown": {
+        "arch_match": 0.03,
+        "bug_type_match": 0.05,
+        "no_pie_plt_got": 0.03,
+        "no_canary_rop": 0.05,
+        "libc_available": 0.05,
+        "has_write_import": 0.05,
+        "has_write_got": 0.05,
+        "precond_control_eip": 0.025,
+        "precond_has_reentry_function": 0.02,
+        "precond_libc_available": 0.03,
+        "precond_has_import:write": 0.03,
+        "precond_has_got:write": 0.03,
+        "recipe_confidence": 0.08,
+        "source_quality": 0.1
+      }
+    },
+    {
+      "id": "i386_ret2libc_d23dc4",
+      "name": "i386 ret2libc how2exploit_binary/exercise-4 at master · Bretley/how2exploit_binary",
+      "technique": "ret2libc",
+      "score": 0.725,
+      "priority": "high",
+      "reason": "ret2libc technique for i386 stack_overflow",
+      "preconditions": [
+        "control_eip",
+        "has_reentry_function",
+        "libc_available",
+        "has_import:write",
+        "has_got:write"
+      ],
+      "required_measurements": [
+        "libc_system",
+        "verified_eip_offset",
+        "write_got",
+        "write_plt",
+        "libc_binsh",
+        "libc_write"
+      ],
+      "payload_shape": [
+        "padding + write@plt + vulnerable_function + 1 + write@got + 4",
+        "padding + system + exit + binsh"
+      ],
+      "failure_signatures": {},
+      "source_refs": [
+        {
+          "type": "web_search",
+          "url": "https://github.com/Bretley/how2exploit_binary/tree/master/exercise-4",
+          "title": "how2exploit_binary/exercise-4 at master · Bretley/how2exploit_binary",
+          "source_score": 0.7,
+          "query": "i386 ret2libc write@plt leak write@got pwntools"
+        }
+      ],
+      "not_applicable_if": [],
+      "scoring_breakdown": {
+        "arch_match": 0.03,
+        "bug_type_match": 0.05,
+        "no_pie_plt_got": 0.03,
+        "no_canary_rop": 0.05,
+        "libc_available": 0.05,
+        "has_write_import": 0.05,
+        "has_write_got": 0.05,
+        "precond_control_eip": 0.025,
+        "precond_has_reentry_function": 0.02,
+        "precond_libc_available": 0.03,
+        "precond_has_import:write": 0.03,
+        "precond_has_got:write": 0.03,
+        "recipe_confidence": 0.09,
+        "source_quality": 0.07
+      }
+    },
+    {
+      "id": "i386_ret2libc_e207a5",
+      "name": "i386 ret2libc exploitation-grimoire/BufferOverflows/ret2libc/32bit/ret2libc-aslr.md at master ",
+      "technique": "ret2libc",
+      "score": 0.725,
+      "priority": "high",
+      "reason": "ret2libc technique for i386 stack_overflow",
+      "preconditions": [
+        "control_eip",
+        "has_reentry_function",
+        "libc_available",
+        "has_import:write",
+        "has_got:write"
+      ],
+      "required_measurements": [
+        "libc_system",
+        "verified_eip_offset",
+        "write_got",
+        "write_plt",
+        "libc_binsh",
+        "libc_write"
+      ],
+      "payload_shape": [
+        "padding + write@plt + vulnerable_function + 1 + write@got + 4",
+        "padding + system + exit + binsh"
+      ],
+      "failure_signatures": {},
+      "source_refs": [
+        {
+          "type": "web_search",
+          "url": "https://github.com/D4mianWayne/PwnLand/blob/master/BufferOverflows/ret2libc/32bit/ret2libc-aslr.md",
+          "title": "exploitation-grimoire/BufferOverflows/ret2libc/32bit/ret2libc-aslr.md at master · pwnfuzz/exploitation-grimoire",
+          "source_score": 0.7,
+          "query": "pwntools i386 32 bit write plt got ret2libc"
+        }
+      ],
+      "not_applicable_if": [],
+      "scoring_breakdown": {
+        "arch_match": 0.03,
+        "bug_type_match": 0.05,
+        "no_pie_plt_got": 0.03,
+        "no_canary_rop": 0.05,
+        "libc_available": 0.05,
+        "has_write_import": 0.05,
+        "has_write_got": 0.05,
+        "precond_control_eip": 0.025,
+        "precond_has_reentry_function": 0.02,
+        "precond_libc_available": 0.03,
+        "precond_has_import:write": 0.03,
+        "precond_has_got:write": 0.03,
+        "recipe_confidence": 0.09,
+        "source_quality": 0.07
+      }
+    },
+    {
+      "id": "i386_ret2libc_82f315",
+      "name": "i386 ret2libc CTFtime.org / TUCTF 2019 / pancakes / Writeup",
+      "technique": "ret2libc",
+      "score": 0.72,
+      "priority": "high",
+      "reason": "ret2libc technique for i386 stack_overflow",
+      "preconditions": [
+        "control_eip",
+        "has_reentry_function",
+        "libc_available",
+        "has_import:write",
+        "has_got:write"
+      ],
+      "required_measurements": [
+        "libc_system",
+        "verified_eip_offset",
+        "write_got",
+        "write_plt",
+        "libc_binsh",
+        "libc_write"
+      ],
+      "payload_shape": [
+        "padding + write@plt + vulnerable_function + 1 + write@got + 4",
+        "padding + system + exit + binsh"
+      ],
+      "failure_signatures": {},
+      "source_refs": [
+        {
+          "type": "web_search",
+          "url": "https://ctftime.org/writeup/17393",
+          "title": "CTFtime.org / TUCTF 2019 / pancakes / Writeup",
+          "source_score": 0.75,
+          "query": "CTF pwn provided libc ret2libc GOT leak i386 32 bit"
+        }
+      ],
+      "not_applicable_if": [],
+      "scoring_breakdown": {
+        "arch_match": 0.03,
+        "bug_type_match": 0.05,
+        "no_pie_plt_got": 0.03,
+        "no_canary_rop": 0.05,
+        "libc_available": 0.05,
+        "has_write_import": 0.05,
+        "has_write_got": 0.05,
+        "precond_control_eip": 0.025,
+        "precond_has_reentry_function": 0.02,
+        "precond_libc_available": 0.03,
+        "precond_has_import:write": 0.03,
+        "precond_has_got:write": 0.03,
+        "recipe_confidence": 0.08,
+        "source_quality": 0.075
+      }
+    }
+  ]
+}

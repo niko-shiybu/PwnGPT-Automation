@@ -1,0 +1,8 @@
+{
+  "iteration": 4,
+  "strategy_summary": "The strategy is to use a format string vulnerability to leak the address of puts from the GOT, then use that to calculate the base address of libc. With the base address, we can find the addresses of system and /bin/sh, and overwrite the return address to call system with /bin/sh as an argument.",
+  "measurements": [],
+  "notes": [
+    "agent_strategy_response"
+  ]
+}

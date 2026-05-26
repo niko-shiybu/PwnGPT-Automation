@@ -1,0 +1,48 @@
+{
+  "iteration": 1,
+  "request_id": "iter1-m1-663a9486",
+  "task_context_dir": "/home/fyc/PwnGPT/automation/runs/20260525-091544-dual-fmt-1/measurement_tasks/iter1-m1-663a9486",
+  "mode": "tools",
+  "actions": [
+    {
+      "tool": "fmt_measure_write_offset",
+      "args": {},
+      "request_id": "iter1-m1-663a9486",
+      "action_id": "iter1-m1-663a9486-a1"
+    }
+  ],
+  "measurement": {
+    "id": 1,
+    "description": "确认格式化字符串写入时应使用的参数位置",
+    "reason": "这是构造写入 payload 的关键前提",
+    "priority": "high"
+  },
+  "measured_facts": {
+    "offsets.fmt_write_arg": 11,
+    "offsets.fmt_offset_arg": 11
+  },
+  "unresolved_facts": [],
+  "notes": [
+    "candidate:1:score=30:found_marker=False",
+    "candidate:11:score=130:found_marker=True",
+    "fmt_scan_stack_offset=11"
+  ],
+  "action_results": [
+    {
+      "request_id": "iter1-m1-663a9486",
+      "action_id": "iter1-m1-663a9486-a1",
+      "tool": "fmt_measure_write_offset",
+      "status": "ok",
+      "measured_keys": [
+        "offsets.fmt_offset_arg",
+        "offsets.fmt_write_arg"
+      ],
+      "unresolved_count": 0,
+      "notes": [
+        "candidate:1:score=30:found_marker=False",
+        "candidate:11:score=130:found_marker=True",
+        "fmt_scan_stack_offset=11"
+      ]
+    }
+  ]
+}

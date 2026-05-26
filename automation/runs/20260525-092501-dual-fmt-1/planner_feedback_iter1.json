@@ -1,0 +1,8 @@
+{
+  "iteration": 1,
+  "strategy_summary": "The strategy is to use a format string vulnerability in the printf function to leak the address of puts from the GOT. Then, we will use this leaked address to calculate the base address of libc and perform a ret2libc attack to call system('/bin/sh').",
+  "measurements": [],
+  "notes": [
+    "agent_strategy_response"
+  ]
+}

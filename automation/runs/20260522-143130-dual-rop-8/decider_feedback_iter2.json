@@ -1,8 +1,0 @@
-{
-  "failure": "The shellcode is not being executed, likely due to the stack being non-executable. The binary has NX enabled, so the shellcode cannot be executed directly on the stack.",
-  "next_action": "line 10: change shellcode = asm(shellcraft.sh()) to use a ROP chain to call execve('/bin/sh', NULL, NULL) instead of shellcode",
-  "notes": [
-    "TAG: NX_ENABLED"
-  ],
-  "value_score": 0
-}

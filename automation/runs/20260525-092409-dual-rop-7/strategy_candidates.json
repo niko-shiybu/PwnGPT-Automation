@@ -1,0 +1,346 @@
+{
+  "challenge_fingerprint": {
+    "arch": "amd64",
+    "bits": 64,
+    "bug_type": "stack_overflow",
+    "mitigations": {
+      "canary": false,
+      "nx": true,
+      "pie": false,
+      "relro": "partial"
+    },
+    "imports": [
+      "puts",
+      "read",
+      "system"
+    ],
+    "plt": {
+      "puts": "0x401074",
+      "read": "0x4010a4",
+      "system": "0x401094"
+    },
+    "got": {
+      "puts": "0x404018",
+      "read": "0x404030",
+      "system": "0x404028"
+    },
+    "libc_provided": true,
+    "offset_status": "candidate_only"
+  },
+  "warnings": [
+    "Mitigation conflict: binary_features.canary=True vs checksec=False; using checksec"
+  ],
+  "search_plan": {
+    "queries": [
+      {
+        "query": "amd64 ret2libc puts@plt leak puts@got pwntools",
+        "priority": 1.0,
+        "purpose": "Primary: ret2libc via puts@plt GOT leak with provided libc"
+      },
+      {
+        "query": "CTF pwn provided libc ret2libc GOT leak amd64 x86_64",
+        "priority": 0.85,
+        "purpose": "General: libc-based ret2libc with GOT leak"
+      },
+      {
+        "query": "amd64 x86_64 stack overflow EIP offset cyclic pattern measurement",
+        "priority": 0.8,
+        "purpose": "General offset measurement techniques"
+      },
+      {
+        "query": "amd64 ret2libc pop rdi ret gadget pwntools ROP",
+        "priority": 0.7,
+        "purpose": "amd64-specific: pop rdi; ret gadget use"
+      },
+      {
+        "query": "site:ropemporium.com PLT GOT amd64 x86_64 ROP",
+        "priority": 0.6,
+        "purpose": "ROP Emporium references for ret2libc"
+      },
+      {
+        "query": "site:docs.pwntools.com ELF plt got amd64",
+        "priority": 0.5,
+        "purpose": "pwntools ELF API reference"
+      },
+      {
+        "query": "amd64 ret2csu __libc_csu_init pwntools",
+        "priority": 0.5,
+        "purpose": "amd64 ret2csu technique"
+      },
+      {
+        "query": "amd64 x86_64 one_gadget libc execve pwntools",
+        "priority": 0.4,
+        "purpose": "Secondary: one_gadget approach"
+      }
+    ],
+    "sources": [
+      "local_recipe_db",
+      "BraveSearchClient"
+    ]
+  },
+  "candidates": [
+    {
+      "id": "amd64_ret2libc_puts_leak",
+      "name": "amd64 ret2libc via puts@plt GOT leak with pop rdi gadget",
+      "technique": "ret2libc",
+      "score": 0.7175,
+      "priority": "high",
+      "reason": "ret2libc technique for amd64 stack_overflow",
+      "preconditions": [
+        "control_rip",
+        "has_import:puts",
+        "has_got:puts",
+        "has_reentry_function",
+        "has_gadget:pop_rdi_ret",
+        "libc_available"
+      ],
+      "required_measurements": [
+        "verified_rip_offset",
+        "puts_plt",
+        "puts_got",
+        "pop_rdi_ret",
+        "vulnerable_function",
+        "libc_puts",
+        "libc_system",
+        "libc_binsh"
+      ],
+      "payload_shape": [
+        "padding + pop_rdi_ret + puts@got + puts@plt + vulnerable_function",
+        "padding + pop_rdi_ret + binsh + system"
+      ],
+      "failure_signatures": {
+        "EOF_BEFORE_LEAK": "offset or PLT/gadget address may be wrong",
+        "BAD_LIBC_BASE": "wrong libc or wrong leaked symbol parsing",
+        "NO_SHELL": "system/binsh address wrong or stack alignment issue"
+      },
+      "source_refs": [
+        {
+          "type": "local_recipe_db",
+          "url": null,
+          "title": "local built-in recipe"
+        }
+      ],
+      "not_applicable_if": [],
+      "scoring_breakdown": {
+        "arch_match": 0.03,
+        "bug_type_match": 0.05,
+        "no_pie_plt_got": 0.03,
+        "no_canary_rop": 0.05,
+        "libc_available": 0.05,
+        "has_puts_import": 0.05,
+        "precond_control_rip": 0.025,
+        "precond_has_import:puts": 0.03,
+        "precond_has_got:puts": 0.03,
+        "precond_has_reentry_function": 0.02,
+        "precond_has_gadget:pop_rdi_ret": -0.0125,
+        "precond_libc_available": 0.03,
+        "recipe_confidence": 0.085,
+        "source_quality": 0.0
+      }
+    },
+    {
+      "id": "amd64_ret2libc_510634",
+      "name": "amd64 ret2libc Pwn: Ret2libc. Description | by gr4n173 | Medium",
+      "technique": "ret2libc",
+      "score": 0.63,
+      "priority": "high",
+      "reason": "ret2libc technique for amd64 stack_overflow",
+      "preconditions": [
+        "control_eip",
+        "has_reentry_function",
+        "libc_available",
+        "has_import:puts",
+        "has_got:puts"
+      ],
+      "required_measurements": [
+        "libc_system",
+        "libc_puts",
+        "puts_plt",
+        "puts_got",
+        "verified_eip_offset",
+        "libc_binsh",
+        "pop_rdi_ret"
+      ],
+      "payload_shape": [
+        "padding + puts@plt + vulnerable_function + puts@got",
+        "padding + system + exit + binsh"
+      ],
+      "failure_signatures": {},
+      "source_refs": [
+        {
+          "type": "web_search",
+          "url": "https://medium.com/@gr4n173/pwn-ret2libc-7c8b7334725f",
+          "title": "Pwn: Ret2libc. Description | by gr4n173 | Medium",
+          "source_score": 0.4,
+          "query": "amd64 ret2libc pop rdi ret gadget pwntools ROP"
+        }
+      ],
+      "not_applicable_if": [],
+      "scoring_breakdown": {
+        "arch_match": 0.03,
+        "bug_type_match": 0.05,
+        "no_pie_plt_got": 0.03,
+        "no_canary_rop": 0.05,
+        "libc_available": 0.05,
+        "has_puts_import": 0.05,
+        "precond_control_eip": 0.025,
+        "precond_has_reentry_function": 0.02,
+        "precond_libc_available": 0.03,
+        "precond_has_import:puts": 0.03,
+        "precond_has_got:puts": 0.03,
+        "recipe_confidence": 0.075,
+        "source_quality": 0.04
+      }
+    },
+    {
+      "id": "amd64_ret2libc_0c628e",
+      "name": "amd64 ret2libc pwn> ret2libc by example | reHex Ninja",
+      "technique": "ret2libc",
+      "score": 0.615,
+      "priority": "high",
+      "reason": "ret2libc technique for amd64 stack_overflow",
+      "preconditions": [
+        "control_eip",
+        "has_reentry_function",
+        "libc_available",
+        "has_import:puts",
+        "has_got:puts"
+      ],
+      "required_measurements": [
+        "libc_system",
+        "libc_puts",
+        "puts_plt",
+        "puts_got",
+        "verified_eip_offset",
+        "libc_binsh"
+      ],
+      "payload_shape": [
+        "padding + puts@plt + vulnerable_function + puts@got",
+        "padding + system + exit + binsh"
+      ],
+      "failure_signatures": {},
+      "source_refs": [
+        {
+          "type": "web_search",
+          "url": "https://rehex.ninja/posts/ret2libc/",
+          "title": "pwn> ret2libc by example | reHex Ninja",
+          "source_score": 0.25,
+          "query": "amd64 ret2libc puts@plt leak puts@got pwntools"
+        }
+      ],
+      "not_applicable_if": [],
+      "scoring_breakdown": {
+        "arch_match": 0.03,
+        "bug_type_match": 0.05,
+        "no_pie_plt_got": 0.03,
+        "no_canary_rop": 0.05,
+        "libc_available": 0.05,
+        "has_puts_import": 0.05,
+        "precond_control_eip": 0.025,
+        "precond_has_reentry_function": 0.02,
+        "precond_libc_available": 0.03,
+        "precond_has_import:puts": 0.03,
+        "precond_has_got:puts": 0.03,
+        "recipe_confidence": 0.075,
+        "source_quality": 0.025
+      }
+    },
+    {
+      "id": "amd64_ret2libc_cdd569",
+      "name": "amd64 ret2libc Learnings on Binary Exploitation (1): ret2libc | Richard's blog",
+      "technique": "ret2libc",
+      "score": 0.605,
+      "priority": "high",
+      "reason": "ret2libc technique for amd64 stack_overflow",
+      "preconditions": [
+        "control_eip",
+        "has_reentry_function",
+        "libc_available",
+        "has_import:puts",
+        "has_got:puts"
+      ],
+      "required_measurements": [
+        "libc_system",
+        "libc_puts",
+        "puts_plt",
+        "puts_got",
+        "verified_eip_offset",
+        "libc_binsh",
+        "pop_rdi_ret"
+      ],
+      "payload_shape": [
+        "padding + puts@plt + vulnerable_function + puts@got",
+        "padding + system + exit + binsh"
+      ],
+      "failure_signatures": {},
+      "source_refs": [
+        {
+          "type": "web_search",
+          "url": "https://rgwohlbold.de/2021/learnings-on-binary-exploitation-1-ret2libc/",
+          "title": "Learnings on Binary Exploitation (1): ret2libc | Richard's blog",
+          "source_score": 0.25,
+          "query": "CTF pwn provided libc ret2libc GOT leak amd64 x86_64"
+        }
+      ],
+      "not_applicable_if": [],
+      "scoring_breakdown": {
+        "arch_match": 0.03,
+        "bug_type_match": 0.05,
+        "no_pie_plt_got": 0.03,
+        "no_canary_rop": 0.05,
+        "libc_available": 0.05,
+        "has_puts_import": 0.05,
+        "precond_control_eip": 0.025,
+        "precond_has_reentry_function": 0.02,
+        "precond_libc_available": 0.03,
+        "precond_has_import:puts": 0.03,
+        "precond_has_got:puts": 0.03,
+        "recipe_confidence": 0.065,
+        "source_quality": 0.025
+      }
+    },
+    {
+      "id": "amd64_ret2libc_96270c",
+      "name": "amd64 ret2libc pwnlib.rop.rop — Return Oriented Programming — pwntools 4.15.0 documentation",
+      "technique": "ret2libc",
+      "score": 0.57,
+      "priority": "high",
+      "reason": "ret2libc technique for amd64 stack_overflow",
+      "preconditions": [
+        "control_eip",
+        "has_reentry_function",
+        "libc_available"
+      ],
+      "required_measurements": [
+        "libc_binsh",
+        "libc_system",
+        "verified_eip_offset",
+        "pop_rdi_ret"
+      ],
+      "payload_shape": [],
+      "failure_signatures": {},
+      "source_refs": [
+        {
+          "type": "web_search",
+          "url": "https://docs.pwntools.com/en/stable/rop/rop.html",
+          "title": "pwnlib.rop.rop — Return Oriented Programming — pwntools 4.15.0 documentation",
+          "source_score": 1.0,
+          "query": "amd64 ret2libc pop rdi ret gadget pwntools ROP"
+        }
+      ],
+      "not_applicable_if": [],
+      "scoring_breakdown": {
+        "arch_match": 0.03,
+        "bug_type_match": 0.05,
+        "no_pie_plt_got": 0.03,
+        "no_canary_rop": 0.05,
+        "libc_available": 0.05,
+        "precond_control_eip": 0.025,
+        "precond_has_reentry_function": 0.02,
+        "precond_libc_available": 0.03,
+        "recipe_confidence": 0.065,
+        "source_quality": 0.1
+      }
+    }
+  ]
+}

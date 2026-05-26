@@ -1,0 +1,8 @@
+{
+  "iteration": 4,
+  "strategy_summary": "The strategy is to use a ret2libc attack. We will first leak the address of a libc function (write) by calling it with a controlled argument, then calculate the base address of libc. After that, we can call system('/bin/sh') using the leaked libc base address.",
+  "measurements": [],
+  "notes": [
+    "agent_strategy_response"
+  ]
+}

@@ -1,8 +1,0 @@
-{
-  "failure": "The exploit is failing because the address of '/bin/sh' is being taken from the libc, which is not correct. The binary and the libc are different, and the address of '/bin/sh' in the libc will not be the same as in the binary. This is causing a segmentation fault (SIGSEGV).",
-  "next_action": "line 7: change bin_sh_addr = next(libc.search(b'/bin/sh\\x00')) to bin_sh_addr = next(binary.search(b'/bin/sh\\x00'))",
-  "notes": [
-    "TAG: wrong_address_source"
-  ],
-  "value_score": 0
-}

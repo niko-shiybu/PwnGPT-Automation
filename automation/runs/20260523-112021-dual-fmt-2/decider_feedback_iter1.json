@@ -1,6 +1,0 @@
-{
-  "failure": "The exploit crashes due to a segmentation fault, likely caused by an incorrect offset or gadget address.",
-  "next_action": "Re-evaluate the offsets and gadgets used in the payload. Ensure that the addresses for pop_rdi_ret and ret are correct and that the offsets for the format string write are accurate. Additionally, verify that the leaked address is correctly calculated and that the libc base is properly determined.",
-  "notes": [],
-  "value_score": 0
-}

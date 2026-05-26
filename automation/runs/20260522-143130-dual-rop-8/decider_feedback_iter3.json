@@ -1,9 +1,0 @@
-{
-  "failure": "line 14: The shellcode is not being executed, likely due to the stack being non-executable despite the binary having an executable stack. This is because the shellcode is not aligned properly or the offset is incorrect.",
-  "next_action": "line 14: Change payload += shellcode to payload += p64(binary.symbols['vuln']) + shellcode to ensure the shellcode is executed after the return address is set to the vulnerable function, which has an executable stack.",
-  "notes": [
-    "TAG: SIGSEGV",
-    "TAG: shellcode_execution"
-  ],
-  "value_score": 0
-}

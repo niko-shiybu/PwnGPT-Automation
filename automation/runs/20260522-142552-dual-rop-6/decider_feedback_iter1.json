@@ -1,8 +1,0 @@
-{
-  "failure": "The exploit is failing due to a segmentation fault (SIGSEGV) because the address for the '/bin/sh' string in libc is not correctly calculated. The next(libc.search(b'/bin/sh\\x00')) call is returning an incorrect or non-existent address.",
-  "next_action": "line 12: change next(libc.search(b'/bin/sh\\x00')) to next(libc.search(b'/bin/sh\\x00')) + libc.address",
-  "notes": [
-    "TAG: incorrect_address_calculation"
-  ],
-  "value_score": 0
-}

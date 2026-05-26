@@ -1,6 +1,0 @@
-{
-  "failure": "line 10: the payload is missing a 'ret' gadget to align the stack, which causes a SIGSEGV when the ROP chain is executed",
-  "next_action": "",
-  "notes": [],
-  "value_score": 0
-}

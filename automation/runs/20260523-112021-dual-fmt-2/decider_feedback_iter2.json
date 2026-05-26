@@ -1,6 +1,0 @@
-{
-  "failure": "The exploit is causing a segmentation fault, likely due to incorrect payload or offset calculations.",
-  "next_action": "Re-evaluate the payload construction and the offsets used in the format string. Ensure that the offsets and values are correctly calculated and that the payload does not cause a buffer overflow or overwrite unintended memory locations. Additionally, verify the addresses and the way the main address is being split into bytes.",
-  "notes": [],
-  "value_score": 0
-}

@@ -1,6 +1,0 @@
-{
-  "failure": "The binary does not have a 'write' function in its PLT, causing a KeyError.",
-  "next_action": "",
-  "notes": [],
-  "value_score": 0
-}

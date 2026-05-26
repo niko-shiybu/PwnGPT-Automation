@@ -1,8 +1,0 @@
-{
-  "failure": "The shellcode is not properly aligned and the payload length might be incorrect, causing a segmentation fault. The shellcode should be placed at an address that is a multiple of 16 to ensure proper alignment.",
-  "next_action": "line 12: change payload = b'A' * 24 + shellcode to payload = b'A' * 24 + p64(0xdeadbeef) + shellcode",
-  "notes": [
-    "TAG: shellcode_alignment"
-  ],
-  "value_score": 0
-}

@@ -1,8 +1,0 @@
-{
-  "failure": "KeyError: 'puts' on line 19, the binary does not have a 'puts' symbol in its PLT",
-  "next_action": "line 19: change rop.call(binary.plt['puts'], [binary.got['read']]) to rop.call(binary.plt['read'], [binary.got['read']])",
-  "notes": [
-    "TAG: missing_symbol"
-  ],
-  "value_score": 0
-}

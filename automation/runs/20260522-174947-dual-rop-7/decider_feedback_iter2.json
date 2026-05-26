@@ -1,6 +1,0 @@
-{
-  "failure": "SIGSEGV indicates a wrong gadget or function address",
-  "next_action": "Verify the addresses of the gadgets and the system function. Ensure that the correct offsets and addresses are used, and check if the binary or libc paths are correct. Also, ensure that the payload is correctly constructed and the interactive mode is properly handled.",
-  "notes": [],
-  "value_score": 0
-}

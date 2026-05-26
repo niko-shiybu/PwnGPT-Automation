@@ -1,0 +1,25 @@
+{
+  "iteration": 1,
+  "strategy_summary": "利用格式化字符串漏洞覆盖全局变量x的值，使其等于4，从而触发执行system(\"/bin/sh\")。",
+  "measurements": [
+    {
+      "id": 1,
+      "description": "确认格式化字符串写入时应使用的参数位置",
+      "reason": "这是构造写入 payload 的关键前提",
+      "priority": "high"
+    },
+    {
+      "id": 2,
+      "description": "确认需要被改写的目标地址是多少",
+      "reason": "需要把目标值写入正确位置",
+      "priority": "high"
+    },
+    {
+      "id": 3,
+      "description": "确认程序是否存在固定输入提示以及提示文本",
+      "reason": "判断是否需要同步交互",
+      "priority": "medium"
+    }
+  ],
+  "notes": []
+}

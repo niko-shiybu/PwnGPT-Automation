@@ -1,6 +1,0 @@
-{
-  "failure": "line 10: the payload is not correctly overwriting the GOT entry for 'printf' with the address of 'system'. The exploit crashes, likely due to an incorrect format string or an issue with the offsets.",
-  "next_action": "specific instruction: on line 10, verify the offsets and the format string payload. Use a tool like `fmtstr_payload` with the correct offsets and ensure that the payload is correctly overwriting the GOT entry. Additionally, check if the stack canary or other protections are causing the crash.",
-  "notes": [],
-  "value_score": 0
-}

@@ -1,8 +1,0 @@
-{
-  "failure": "The arguments for get_flag are incorrect. The values 814536271 and 425138641 do not seem to be the correct arguments for the get_flag function. This is causing a segmentation fault (SIGSEGV).",
-  "next_action": "line 15: change p32(814536271) to the correct first argument for get_flag; line 17: change p32(425138641) to the correct second argument for get_flag",
-  "notes": [
-    "TAG: incorrect_arguments"
-  ],
-  "value_score": 0
-}

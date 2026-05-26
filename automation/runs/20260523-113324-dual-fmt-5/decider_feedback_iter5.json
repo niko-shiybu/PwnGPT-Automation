@@ -1,6 +1,0 @@
-{
-  "failure": "BytesWarning: Text is not bytes; assuming ASCII, no guarantees. See https://docs.pwntools.com/#bytes",
-  "next_action": "",
-  "notes": [],
-  "value_score": 0
-}

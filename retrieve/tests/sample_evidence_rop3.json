@@ -1,0 +1,80 @@
+{
+  "challenge_type": "rop",
+  "problem_path": "/home/fyc/PwnGPT/pwn/stack/rop-3/problems.txt",
+  "binary": {
+    "path": "/home/fyc/PwnGPT/pwn/stack/rop-3/rop3",
+    "exists": true,
+    "executable": true,
+    "sha256": "c360fef38ebdc05c449ee87251dc5f084276ca18ceb443f19da456ed37600a3c",
+    "arch": "i386",
+    "checksec_raw": "[*] '/home/fyc/PwnGPT/pwn/stack/rop-3/rop3'\n    Arch:       i386-32-little\n    RELRO:      Partial RELRO\n    Stack:      No canary found\n    NX:         NX enabled\n    PIE:        No PIE (0x8048000)\n    Stripped:   No"
+  },
+  "symbols": {},
+  "symbols_map": {
+    "globals": {},
+    "funcs": {
+      "vulnerable_function": "0x08048474",
+      "be_nice_to_people": "0x0804849d",
+      "main": "0x080484c6"
+    },
+    "got": {
+      "read": "0x804a000",
+      "write": "0x804a010"
+    },
+    "plt": {
+      "read": "0x8048360",
+      "write": "0x80483a0"
+    }
+  },
+  "strings": {},
+  "strings_raw": [
+    "154 /lib/ld-linux.so.2",
+    "    25c libc.so.6",
+    "    275 read",
+    "    27a setresgid",
+    "    284 getegid",
+    "    29e write",
+    "    2a4 GLIBC_2.0",
+    "   1020 GCC: (Ubuntu/Linaro 4.6.3-1ubuntu5) 4.6.3",
+    "   1b7a read@@GLIBC_2.0",
+    "   1bc2 vulnerable_function",
+    "   1c2b write@@GLIBC_2.0",
+    "   1c6b main"
+  ],
+  "sources": {
+    "/home/fyc/PwnGPT/pwn/stack/rop-3/rop3-7f3312fe43c46d26.c": "#undef _FORTIFY_SOURCE\n#include <stdio.h>\n#include <stdlib.h>\n#include <unistd.h>\n\nvoid vulnerable_function()  {\n\tchar buf[128];\n\tread(STDIN_FILENO, buf,256);\n}\n\nvoid be_nice_to_people() {\n\tgid_t gid = getegid();\n\tsetresgid(gid, gid, gid);\n}\n\nint main(int argc, char** argv) {\n        be_nice_to_people();\n\tvulnerable_function();\n\twrite(STDOUT_FILENO, \"Hello, World\\n\", 13);\n}\n",
+    "/home/fyc/PwnGPT/pwn/stack/rop-3/rop3de.c": "ssize_t vulnerable_function()\n{\n  char buf[136]; // [esp+10h] [ebp-88h] BYREF\n\n  return read(0, buf, 0x100u);\n}"
+  },
+  "struct_defs": [],
+  "offsets": {},
+  "io_prompts": [],
+  "constraints": {
+    "pointer_width": 4
+  },
+  "binary_features": {
+    "arch_bits": 32,
+    "nx": true,
+    "pie": false,
+    "canary": true,
+    "relro": "partial"
+  },
+  "runtime": {
+    "aslr_enabled": true,
+    "libc_path": "/lib32/libc.so.6",
+    "libc_version": "2.41."
+  },
+  "interaction_model": {
+    "prompt_sequence": [],
+    "input_kind_map": {}
+  },
+  "crash_signals": {},
+  "probe_artifacts": {
+    "crash_offset_proof": "",
+    "gadget_inventory": {}
+  },
+  "provenance": {
+    "constraints.pointer_width": "measured"
+  },
+  "missing_fields": [],
+  "notes": []
+}

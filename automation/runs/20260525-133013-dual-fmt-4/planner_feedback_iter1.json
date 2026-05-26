@@ -1,0 +1,8 @@
+{
+  "iteration": 1,
+  "strategy_summary": "The binary is vulnerable to a format string attack. We can use the format string vulnerability to leak the address of the backdoor function, which will give us the base address of the binary. Then, we can overwrite the GOT entry of a function (e.g., `printf`) with the address of the `backdoor` function to get a shell.",
+  "measurements": [],
+  "notes": [
+    "agent_strategy_response"
+  ]
+}

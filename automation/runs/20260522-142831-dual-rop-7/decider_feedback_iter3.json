@@ -1,8 +1,0 @@
-{
-  "failure": "line 7: fact_store is not defined, which leads to a NameError",
-  "next_action": "define fact_store or use the correct method to access the gadgets",
-  "notes": [
-    "TAG: undefined_variable"
-  ],
-  "value_score": 0
-}

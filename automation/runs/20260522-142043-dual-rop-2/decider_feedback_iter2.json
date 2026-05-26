@@ -1,8 +1,0 @@
-{
-  "failure": "The exploit is failing due to a segmentation fault (SIGSEGV) which indicates that the return address or the function being called is incorrect. The 'ret' and 'not_called' addresses are not valid for this context.",
-  "next_action": "line 10: change ret = p32(0x8048343) to ret = p32(binary.symbols['vuln']) and line 11: change not_called = p32(0x80484a4) to not_called = p32(binary.symbols['win'])",
-  "notes": [
-    "TAG: wrong_function_address"
-  ],
-  "value_score": 0
-}
